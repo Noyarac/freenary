@@ -1,7 +1,7 @@
 package eu.carayon.freenary.repositories;
 
+import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
 
@@ -14,8 +14,6 @@ public class InvestmentRepository {
     private final ScpiRepository scpiRepository;
 
     public Set<Investment> getAll() {
-        return this.scpiRepository.findAll().stream()
-            .map(scpi -> (Investment) scpi)
-            .collect(Collectors.toSet());
+        return new HashSet<>(this.scpiRepository.findAll());
     }
 }

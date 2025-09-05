@@ -7,27 +7,23 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import eu.carayon.freenary.security.JwtUtils;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/auth")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AuthController {
     private final AuthenticationManager authManager;
     private final JwtUtils jwtUtils;
-
     
     @PostMapping("/login")
-    public Map<String, String> login(@RequestBody AuthRequest req) {
+    public Map<String, String> login(@RequestBody AuthRequest request) {
         Authentication authentication = authManager.authenticate(
-                new UsernamePasswordAuthenticationToken(req.username(), req.password()));
-        // si on arrive ici, auth OK
-        String token = jwtUtils.generateToken(authentication.getName());
-        return Map.of("token", token);
+            new UsernamePasswordAuthenticationToken(request.username(), request.password())
+        );
+        return Map.of("token", jwtUtils.generateToken(authentication.getName()));
     }
 
     public record AuthRequest(String username, String password) {}

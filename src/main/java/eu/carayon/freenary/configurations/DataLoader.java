@@ -24,7 +24,7 @@ public class DataLoader {
                 new Scpi("Grand Paris", "Perial")
             ));
             userRepository.save(
-                new UserEntity("benjamin", "$2a$12$jyWP/TIdu2YrhmefH8Wi/OnW1Y7sSU9XmvVztRwUUmSaHaz2IAsu.")
+                new UserEntity(null, "benjamin", "$2a$12$jyWP/TIdu2YrhmefH8Wi/OnW1Y7sSU9XmvVztRwUUmSaHaz2IAsu.")
             );
         };
     }

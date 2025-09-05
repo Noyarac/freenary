@@ -13,7 +13,7 @@ public class Scpi extends Investment {
     private String issuer;
 
     public Scpi(String name, String issuer) {
-        super(null, name, null, null);
+        super(name);
         this.issuer = issuer;
     }
     

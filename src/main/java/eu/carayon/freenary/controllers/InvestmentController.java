@@ -7,7 +7,6 @@ import eu.carayon.freenary.entities.Investment;
 import eu.carayon.freenary.services.InvestmentService;
 import lombok.RequiredArgsConstructor;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -22,9 +21,7 @@ public class InvestmentController {
 
     @GetMapping("/all")
     public Map<String, Set<Investment>> getAll() {
-        Map<String, Set<Investment>> jsonResponse = new HashMap<>();
-        jsonResponse.put("results", investmentService.getAll());
-        return jsonResponse;
+        return Map.of("results", investmentService.getAll());
     }
     
 

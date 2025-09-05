@@ -11,11 +11,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableMethodSecurity
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtUtils jwtUtils;
     private final CustomUserDetailsService userDetailsService;
@@ -26,14 +26,12 @@ public class SecurityConfig {
 
         http
             .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**", "/h2-console/**", "/actuator/**").permitAll()
+            .authorizeHttpRequests(auth ->
+                auth
+                .requestMatchers("/login").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-
-        // allow H2 console frames
-        http.headers(headers -> headers.frameOptions(frame -> frame.disable()));
 
         return http.build();
     }

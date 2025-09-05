@@ -10,16 +10,14 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 
 @Component
+@RequiredArgsConstructor
 public class JwtUtils {
 
     private final JwtProperties jwtProperties;
     private SecretKey key;
-
-    public JwtUtils(JwtProperties jwtProperties) {
-        this.jwtProperties = jwtProperties;
-    }
 
     @PostConstruct
     public void init() {
@@ -51,7 +49,10 @@ public class JwtUtils {
     }
 
     private Claims parseClaims(String token) {
-        return Jwts.parser().verifyWith(key).build()
-                .parseSignedClaims(token).getPayload();
+        return Jwts.parser()
+            .verifyWith(key)
+            .build()
+            .parseSignedClaims(token)
+            .getPayload();
     }
 }
