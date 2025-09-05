@@ -1,5 +1,7 @@
 package eu.carayon.freenary.entities;
 
+import java.util.Set;
+
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -19,4 +21,6 @@ public abstract class Investment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private Set<Movement> movements;
+    private Set<Valuation> valuations;
 }
