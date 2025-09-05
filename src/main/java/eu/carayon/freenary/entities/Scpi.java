@@ -1,16 +1,20 @@
 package eu.carayon.freenary.entities;
 
 import jakarta.persistence.Entity;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
-@Getter
-@Setter
+@Data
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-@AllArgsConstructor
 public class Scpi extends Investment {
     private String issuer;
+
+    public Scpi(String name, String issuer) {
+        super(null, name, null, null);
+        this.issuer = issuer;
+    }
+    
 }
