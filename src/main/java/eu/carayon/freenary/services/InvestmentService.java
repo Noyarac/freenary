@@ -60,4 +60,9 @@ public class InvestmentService {
         return investmentDto;
     }
 
+    public boolean deleteById(Long id) {
+        investmentRepository.deleteById(id);
+        return investmentRepository.getById(id) instanceof Investment;
+    }
+
 }

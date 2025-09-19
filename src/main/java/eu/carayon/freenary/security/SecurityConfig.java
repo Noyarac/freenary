@@ -3,6 +3,7 @@ package eu.carayon.freenary.security;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -26,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
     private final JwtUtils jwtUtils;
     private final CustomUserDetailsService userDetailsService;
+    private final Environment env;
     @Value("${app.cors.allowed-origin}") private String allowedOrigin;
 
     @Bean
@@ -48,9 +50,10 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin(allowedOrigin);
-        if (System.getProperty("spring.profiles.active", "").contains("dev")) {
+        if (env.matchesProfiles("dev")) {
             configuration.addAllowedOriginPattern("*");
+        } else {
+            configuration.addAllowedOrigin(allowedOrigin);
         }
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");

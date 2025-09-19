@@ -20,4 +20,9 @@ public class InvestmentRepository {
     public Investment getById(Long id) {
         return this.scpiRepository.getReferenceById(id);
     }
+
+    public boolean deleteById(Long id) {
+        this.scpiRepository.deleteById(id);
+        return true;
+    }
 }
