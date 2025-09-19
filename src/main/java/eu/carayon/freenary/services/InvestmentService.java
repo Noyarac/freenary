@@ -46,6 +46,7 @@ public class InvestmentService {
 
     private InvestmentDto getInvestmentDto(Investment investment) {
         InvestmentDto investmentDto = new InvestmentDto();
+        investmentDto.setId(investment.getId());
         investmentDto.setName(investment.getName());
         investmentDto.setPerformance(1.0);
         investmentDto.setType(investment instanceof Scpi ? "scpi" : "unknown");

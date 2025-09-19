@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class InvestmentDto {
+    private Long id;
     private String name;
     private BigDecimal invested;
     private double weight;
