@@ -16,4 +16,8 @@ public class InvestmentRepository {
     public Set<Investment> getAll() {
         return new HashSet<>(this.scpiRepository.findAll());
     }
+
+    public Investment getById(Long id) {
+        return this.scpiRepository.getReferenceById(id);
+    }
 }
