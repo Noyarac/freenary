@@ -1,5 +1,6 @@
 package eu.carayon.freenary.security;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,6 +13,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import eu.carayon.freenary.services.CustomUserDetailsService;
+
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import lombok.RequiredArgsConstructor;
@@ -22,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
     private final JwtUtils jwtUtils;
     private final CustomUserDetailsService userDetailsService;
+    @Value("${app.cors.allowed-origin}") private String allowedOrigin;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -43,8 +48,10 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://localhost:5173");
-        // configuration.addAllowedOriginPattern("*"); // Allows requests from any origin
+        configuration.addAllowedOrigin(allowedOrigin);
+        if (System.getProperty("spring.profiles.active", "").contains("dev")) {
+            configuration.addAllowedOriginPattern("*");
+        }
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true);

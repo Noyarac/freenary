@@ -1,4 +1,4 @@
-package eu.carayon.freenary.security;
+package eu.carayon.freenary.services;
 
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,7 +22,7 @@ public class CustomUserDetailsService implements UserDetailsService{
                         new UsernameNotFoundException("User not found: " + username));
 
         return User.withUsername(user.getUsername())
-                .password(user.getPassword()) // doit être déjà encodé (BCrypt)
+                .password(user.getPassword())
                 .authorities("ROLE_USER")
                 .build();
     }
