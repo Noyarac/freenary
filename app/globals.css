@@ -24,3 +24,29 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+h2 {
+    font-size: xx-large;
+    margin: 4rem 0 1rem 0;
+}
+
+table {
+    margin: 0;
+    margin-bottom: 1rem;
+    border-spacing: 0rem 0.25rem;
+    border-collapse: separate;
+}
+
+th, td {
+    text-align: left;
+    padding: 0;
+}
+
+th:not(:last-child), td:not(:last-child) {
+    padding-right: 1rem;
+}
+
+.tag {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+}
