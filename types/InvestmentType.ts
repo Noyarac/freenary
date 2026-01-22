@@ -1,3 +1,6 @@
+import Investment from "@/entities/Investment"
+
 export enum InvestmentType {
-    SCPI, Stock
+    Scpi = "Scpi",
+    Stock = "Stock"
 }

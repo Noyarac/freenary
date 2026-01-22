@@ -2,18 +2,20 @@ import Investment from "@/entities/Investment"
 import InvestmentLine from "./InvestmentLine"
 import { formatNumber } from "@/utils"
 import InvestmentTag from "./InvestmentTag"
-import { InvestmentType } from "@/types/InvestmentType"
+import InvestmentService from "@/app/services/InvestmentService"
 
 
 export default function Table({ investments, selected, toggleSelected }: { investments: Investment[], selected: boolean, toggleSelected: (ids: number[]) => void }) {
     investments = investments.filter(inv => inv.selected === selected)
-    const grouped = Object.values(
-        investments.reduce((acc, { type, id }) => {
-            if (!acc[type]) acc[type] = { type, values: [] };
-            acc[type].values.push(id);
-            return acc;
-        }, {} as Record<InvestmentType, { type: InvestmentType, values: number[] }>)
-    )
+    const types = [...(new Set(investments.map(inv => inv.constructor.name)))]
+    const groups = types.map(type => {
+        return {
+            type: type,
+            values: investments
+            .filter(inv => inv instanceof InvestmentService.getClassByName(type))
+            .map(inv => inv.id)
+        }
+    })
 
     return <section style={{ margin: "1rem" }}>
         <h2>{selected ? "Selected" : "Unselected"}</h2>
@@ -40,7 +42,7 @@ export default function Table({ investments, selected, toggleSelected }: { inves
         </table>
         <div style={{ display: "flex", gap: "0.25rem", alignItems: "center" }}>
             <div>{selected ? "Remove" : "Add"}</div>
-            {grouped.map(group => <InvestmentTag tag={group.type.toString()} key={group.type.toString()} onClick={() => toggleSelected(group.values)}/>)}
+            {groups.map(group => <InvestmentTag key={group.type} tag={group.type} onClick={() => toggleSelected(group.values)} />)}
         </div>
     </section>
 }

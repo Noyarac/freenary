@@ -4,20 +4,26 @@ import "reflect-metadata"
 import Table from "@/components/Table"
 import { useEffect, useState } from "react"
 import Investment from "@/entities/Investment"
+import InvestmentService from "./services/InvestmentService"
 
 export default function Home() {
     const [investments, setInvestments] = useState<Investment[]>([])
+    useEffect(() => {
+        fetchInvestments()
+    }, [])
+
+    const fetchInvestments = async () => {
+        const res = await fetch("/api/investment")
+        const rawList = await res.json()
+        const investments = rawList.map(InvestmentService.createInvestment)
+        setInvestments(investments)
+    }
+
     const toggleSelected = (ids: number[]) => {
         setInvestments(investments.map(inv => {
             inv.selected = ids.includes(inv.id) ? !inv.selected : inv.selected; return inv
         }))
     }
-    useEffect(() => {
-        fetch("/api/investment")
-            .then(res => res.json() as Promise<Object[]>)
-            .then(list => list.map(inv => Investment.fromJSON(inv)))
-            .then(setInvestments)
-    }, [])
     return (<>
         <Table investments={investments} selected={true} toggleSelected={toggleSelected} />
         <Table investments={investments} selected={false} toggleSelected={toggleSelected} />
