@@ -1,21 +1,18 @@
 "use client"
 
-import "reflect-metadata"
 import Table from "@/components/Table"
 import { useEffect, useState } from "react"
-import Investment from "@/entities/Investment"
-import InvestmentService from "./services/InvestmentService"
+import { InvestmentDTO } from "@/types/InvestmentDTO"
 
 export default function Home() {
-    const [investments, setInvestments] = useState<Investment[]>([])
+    const [investments, setInvestments] = useState<InvestmentDTO[]>([])
     useEffect(() => {
         fetchInvestments()
     }, [])
 
     const fetchInvestments = async () => {
         const res = await fetch("/api/investment")
-        const rawList = await res.json()
-        const investments = rawList.map(InvestmentService.createInvestment)
+        const investments: InvestmentDTO[] = await res.json()
         setInvestments(investments)
     }
 

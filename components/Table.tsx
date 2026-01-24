@@ -1,19 +1,18 @@
-import Investment from "@/entities/Investment"
 import InvestmentLine from "./InvestmentLine"
 import { formatNumber } from "@/utils"
 import InvestmentTag from "./InvestmentTag"
-import InvestmentService from "@/app/services/InvestmentService"
+import { InvestmentDTO } from "@/types/InvestmentDTO"
 
 
-export default function Table({ investments, selected, toggleSelected }: { investments: Investment[], selected: boolean, toggleSelected: (ids: number[]) => void }) {
+export default function Table({ investments, selected, toggleSelected }: { investments: InvestmentDTO[], selected: boolean, toggleSelected: (ids: number[]) => void }) {
     investments = investments.filter(inv => inv.selected === selected)
-    const types = [...(new Set(investments.map(inv => inv.constructor.name)))]
+    const types = [...(new Set(investments.map(inv => inv.type)))]
     const groups = types.map(type => {
         return {
             type: type,
             values: investments
-            .filter(inv => inv instanceof InvestmentService.getClassByName(type))
-            .map(inv => inv.id)
+                .filter(inv => inv.type === "type")
+                .map(inv => inv.id)
         }
     })
 
@@ -25,6 +24,7 @@ export default function Table({ investments, selected, toggleSelected }: { inves
                     <th>Name</th>
                     <th>Type</th>
                     <th>Invested</th>
+                    <th>Value</th>
                     <th>Selected</th>
                 </tr>
             </thead>
@@ -35,7 +35,8 @@ export default function Table({ investments, selected, toggleSelected }: { inves
                 <tr>
                     <th>Total</th>
                     <td></td>
-                    <td>{formatNumber(investments.reduce((prev, cur) => prev += cur.getInvested(), 0))}</td>
+                    <td>{formatNumber(investments.reduce((prev, cur) => prev += cur.invested, 0))} €</td>
+                    <td>{formatNumber(investments.reduce((prev, cur) => prev += cur.value, 0))} €</td>
                     <td></td>
                 </tr>
             </tfoot>

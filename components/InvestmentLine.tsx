@@ -1,15 +1,15 @@
-import Investment from "@/entities/Investment"
-import InvestmentTag from "./InvestmentTag"
+import InvestmentTag from "@/components/InvestmentTag"
 import { formatNumber } from "@/utils"
-import Scpi from "@/entities/Scpi"
+import { InvestmentDTO } from "@/types/InvestmentDTO"
 
-export default function InvestmentLine({ investment, toggleSelected }: { investment: Investment, toggleSelected: (ids: number[]) => void }) {
+export default function InvestmentLine({ investment, toggleSelected }: { investment: InvestmentDTO, toggleSelected: (ids: number[]) => void }) {
 
     return (
         <tr>
-            <th>{investment.getName()}</th>
-            <td className="investmentCell"><InvestmentTag tag={investment.constructor.name} /></td>
-            <td>{formatNumber(investment.getInvested())}</td>
+            <th>{investment.name}</th>
+            <td className="investmentCell"><InvestmentTag tag={investment.type} /></td>
+            <td>{formatNumber(investment.invested)} €</td>
+            <td>{formatNumber(investment.value)} €</td>
             <td><input type="checkbox" checked={investment.selected} onChange={() => toggleSelected([investment.id])} /></td>
         </tr>
     )

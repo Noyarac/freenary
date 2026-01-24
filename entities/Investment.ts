@@ -1,24 +1,19 @@
 import { InvestmentType } from "@/types/InvestmentType"
-import { Column, Entity, OneToMany, PrimaryColumn, TableInheritance } from "typeorm"
-import { EventType } from "@/types/EventType"
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn, TableInheritance } from "typeorm"
+import type Distribution from "@/entities/Distribution"
+import type Movement from "@/entities/Movement"
+import InvestmentService, { InvestmentServiceObject } from "@/services/InvestmentService"
 
 @Entity()
 @TableInheritance({ pattern: "STI", column: { type: "varchar", enum: InvestmentType, name: "type"} })
 export default class Investment {
-    @PrimaryColumn() id!: number
+    @PrimaryGeneratedColumn() id!: number
     @Column() name!: string
     @Column({ nullable: true}) frequency!: number
-    @OneToMany("Event", (event: any) => event.investment)
-    events!: any[]
-    selected = true
+    @OneToMany("Movement", (movement: Movement) => movement.investment, { cascade: true, eager: true}) movements!: Movement[]
+    @OneToMany("Distribution", (distribution: Distribution) => distribution.investment, { cascade: true, eager: true}) distributions!: Distribution[]
 
-    getInvested() {
-        return this.events
-            .filter(event => event.type === EventType.MOVEMENT)
-            .reduce((prev, cur) => prev += cur.amount, 0) / 100
-    }
-
-    getName() {
-        return this.name
+    getService(): InvestmentServiceObject {
+        return InvestmentService(this)
     }
 }
