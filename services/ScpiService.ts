@@ -3,8 +3,7 @@ import Scpi from "@/entities/Scpi"
 import InvestmentService, { InvestmentServiceObject } from "@/services/InvestmentService"
 
 export interface ScpiServiceObject extends InvestmentServiceObject {
-    findDetails(): Promise<{ year: number, subscription: number, withdraw: number, dividendeCourant: number, dividendePV: number }[]>
-    getCurrentUnitValue(): Promise<number>
+    _findDetails(): Promise<{ year: number, subscription: number, withdraw: number, dividendeCourant: number, dividendePV: number }[]>
     _extractFromNodes({ dom, label }: { dom: JSDOM, label: "years" | string }): number[]
 }
 
@@ -14,7 +13,16 @@ function ScpiService(scpi: Scpi) {
         getName(): string {
             return `${scpi.organism} ${scpi.name}`
         },
-        async findDetails() {
+
+        async _getUnitValue(): Promise<number> {
+            const details = await this._findDetails()
+            const currentUnitValue = details
+                .reduce((previous, current) => current?.year > previous.year ? current : previous, { year: 1901, withdraw: 0 })
+                .withdraw
+            return currentUnitValue
+        },
+
+        async _findDetails() {
             const valueDom = await JSDOM.fromURL(`https://www.scpi-lab.com/scpi.php?vue=valorisation&produit_id=${scpi.scpiLabId}`)
             const years = this._extractFromNodes({ dom: valueDom, label: "years" })
             const subscriptions = this._extractFromNodes({ dom: valueDom, label: "Prix de souscription" })
@@ -36,18 +44,6 @@ function ScpiService(scpi: Scpi) {
                 if (Array.from(Object.values(answer)).some(value => value === undefined)) throw new Error()
                 return answer as { [K in keyof typeof answer]: Exclude<typeof answer[K], undefined> }
             })
-        },
-    
-        async getCurrentUnitValue(): Promise<number> {
-            const details = await this.findDetails()
-            const currentUnitValue = details
-                .reduce((previous, current) => current?.year > previous.year ? current : previous, { year: 1901, withdraw: 0 })
-                .withdraw
-            return currentUnitValue
-        },
-
-        async getValue() {
-            return await basicMethodes.getQuantity() * await this.getCurrentUnitValue()
         },
     
         _extractFromNodes({ dom, label }: { dom: JSDOM, label: "years" | string }) {

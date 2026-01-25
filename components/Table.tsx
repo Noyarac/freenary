@@ -1,17 +1,27 @@
-import InvestmentLine from "./InvestmentLine"
+import InvestmentLine from "@/components/InvestmentLine"
+import InvestmentTag from "@/components/InvestmentTag"
 import { formatNumber } from "@/utils"
-import InvestmentTag from "./InvestmentTag"
 import { InvestmentDTO } from "@/types/InvestmentDTO"
 
 
-export default function Table({ investments, selected, toggleSelected }: { investments: InvestmentDTO[], selected: boolean, toggleSelected: (ids: number[]) => void }) {
+export default function Table(
+    {
+        investments,
+        selected,
+        toggleSelected
+    }: {
+        investments: InvestmentDTO[],
+        selected: boolean,
+        toggleSelected: (ids: number[]) => void
+    }
+) {
     investments = investments.filter(inv => inv.selected === selected)
     const types = [...(new Set(investments.map(inv => inv.type)))]
     const groups = types.map(type => {
         return {
             type: type,
-            values: investments
-                .filter(inv => inv.type === "type")
+            ids: investments
+                .filter(inv => inv.type === type)
                 .map(inv => inv.id)
         }
     })
@@ -43,7 +53,7 @@ export default function Table({ investments, selected, toggleSelected }: { inves
         </table>
         <div style={{ display: "flex", gap: "0.25rem", alignItems: "center" }}>
             <div>{selected ? "Remove" : "Add"}</div>
-            {groups.map(group => <InvestmentTag key={group.type} tag={group.type} onClick={() => toggleSelected(group.values)} />)}
+            {groups.map(group => <InvestmentTag key={group.type} tag={group.type} onClick={() => toggleSelected(group.ids)} />)}
         </div>
     </section>
 }

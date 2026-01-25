@@ -7,14 +7,14 @@
  * @class
  * @implements {MigrationInterface}
  */
-module.exports = class Migration1769271024345 {
-    name = 'Migration1769271024345'
+module.exports = class Migration1769345106684 {
+    name = 'Migration1769345106684'
 
     /**
      * @param {QueryRunner} queryRunner
      */
     async up(queryRunner) {
-        await queryRunner.query(`CREATE TABLE "investment" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "frequency" integer, "organism" varchar, "delay" integer, "scpiLabId" integer, "type" varchar CHECK( "type" IN ('Scpi','Stock') ) NOT NULL)`);
+        await queryRunner.query(`CREATE TABLE "investment" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "frequency" integer, "organism" varchar, "delay" integer, "scpiLabId" integer, "ticker" varchar, "type" varchar CHECK( "type" IN ('Scpi','Stock') ) NOT NULL)`);
         await queryRunner.query(`CREATE INDEX "IDX_94b4fc965122aff2fece6ddd17" ON "investment" ("type") `);
         await queryRunner.query(`CREATE TABLE "distribution" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "date" datetime NOT NULL, "amount" integer NOT NULL, "investmentId" integer NOT NULL)`);
         await queryRunner.query(`CREATE TABLE "movement" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "date" datetime NOT NULL, "quantity" integer NOT NULL, "price" integer NOT NULL, "investmentId" integer NOT NULL)`);

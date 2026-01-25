@@ -1,8 +1,8 @@
 "use client"
 
-import Table from "@/components/Table"
 import { useEffect, useState } from "react"
 import { InvestmentDTO } from "@/types/InvestmentDTO"
+import Table from "@/components/Table"
 
 export default function Home() {
     const [investments, setInvestments] = useState<InvestmentDTO[]>([])

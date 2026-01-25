@@ -53,7 +53,28 @@ export class Mock1869206215541 implements MigrationInterface {
                 return movement
             })
         await scpiRepository.save(scpi2)
-    }
+
+        const stock1 = new Stock()
+        stock1.name = 'iShare MSCI World'
+        stock1.frequency = 0
+        stock1.ticker = "WPEA.PA"
+        stock1.movements = [
+            {
+                date: new Date(2024, 5, 23),
+                price: 100000,
+                quantity: ~~(23844 * 2 / 3)
+            },
+            {
+                date: new Date(2024, 10, 25),
+                price: 50000,
+                quantity: ~~(23844 * 1 / 3)
+            },
+        ].map(data => {
+                const movement = new Movement()
+                Object.assign(movement, data)
+                return movement
+            })
+        await stockRepository.save(stock1)    }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
     }
