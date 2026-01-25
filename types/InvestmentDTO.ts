@@ -9,4 +9,5 @@ export interface InvestmentDTO extends InvestmentProperties {
     selected: boolean
     invested: number
     value: number
+    dividendsPerMonth: number
 }

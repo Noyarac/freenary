@@ -10,6 +10,7 @@ export default function InvestmentLine({ investment, toggleSelected }: { investm
             <td className="investmentCell"><InvestmentTag tag={investment.type} /></td>
             <td>{formatNumber(investment.invested)} €</td>
             <td>{formatNumber(investment.value)} €</td>
+            <td>{formatNumber(investment.dividendsPerMonth)} €</td>
             <td><input type="checkbox" checked={investment.selected} onChange={() => toggleSelected([investment.id])} /></td>
         </tr>
     )

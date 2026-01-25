@@ -1,25 +1,27 @@
 import { getRepository } from "@/configurations/ormConfig"
 import Investment from "@/entities/Investment"
 import Movement from "@/entities/Movement"
-import Stock from "@/entities/Stock"
 import { InvestmentDTO } from "@/types/InvestmentDTO"
 
 export interface InvestmentServiceObject {
     getInvested(): number
     getName(): string
     getValue(): Promise<number>
+    getDividendsPerMonth(): Promise<number>
     _getQuantity(): Promise<number>
     _getUnitValue(): Promise<number>
+    _getUnitDividendsPerMonth(): Promise<number>
 }
 
 export async function getJsonForAll() {
     const investmentRepository = await getRepository(Investment)
     const investments = await investmentRepository.find()
     const responseObject: InvestmentDTO[] = await Promise.all(investments.map(async investment => Object.assign({
+        name: investment.getService().getName(),
         type: investment.constructor.name,
         invested: investment.getService().getInvested(),
-        name: investment.getService().getName(),
         value: await investment.getService().getValue(),
+        dividendsPerMonth: await investment.getService().getDividendsPerMonth(),
         selected: true,
     }, investment)))
     return responseObject
@@ -43,6 +45,10 @@ function InvestmentService(investment: Investment) {
             return await this._getQuantity() * await this._getUnitValue()
         },
 
+        async getDividendsPerMonth() {
+            return await this._getQuantity() * await this._getUnitDividendsPerMonth()
+        },
+
         async _getQuantity() {
             return investment.movements
                 .reduce((previous, current) => {
@@ -53,6 +59,10 @@ function InvestmentService(investment: Investment) {
 
         async _getUnitValue() {
             return 1
+        },
+
+        async _getUnitDividendsPerMonth() {
+            return 0
         }
     } as InvestmentServiceObject
 }

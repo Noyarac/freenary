@@ -1,6 +1,7 @@
 import { JSDOM } from "jsdom"
 import Scpi from "@/entities/Scpi"
 import InvestmentService, { InvestmentServiceObject } from "@/services/InvestmentService"
+import { ScpiCacheObject } from "@/types/ScpiCache"
 
 export interface ScpiServiceObject extends InvestmentServiceObject {
     _findDetails(): Promise<{ year: number, subscription: number, withdraw: number, dividendeCourant: number, dividendePV: number }[]>
@@ -14,6 +15,15 @@ function ScpiService(scpi: Scpi) {
             return `${scpi.organism} ${scpi.name}`
         },
 
+        async _getUnitDividendsPerMonth() {
+            const details = await this._findDetails()
+            if (scpi.name === "Optimale") console.debug(details)
+            const lastYearDetails = details
+                .reduce((previous, current) => current?.year > previous.year && current.dividendeCourant ? current : previous, { year: 1901, dividendeCourant: 0, dividendePV: 0 })
+            const dividendsPerMonth = (lastYearDetails.dividendeCourant + lastYearDetails.dividendePV) / 12
+            return dividendsPerMonth
+        },
+
         async _getUnitValue(): Promise<number> {
             const details = await this._findDetails()
             const currentUnitValue = details
@@ -23,29 +33,35 @@ function ScpiService(scpi: Scpi) {
         },
 
         async _findDetails() {
-            const valueDom = await JSDOM.fromURL(`https://www.scpi-lab.com/scpi.php?vue=valorisation&produit_id=${scpi.scpiLabId}`)
-            const years = this._extractFromNodes({ dom: valueDom, label: "years" })
-            const subscriptions = this._extractFromNodes({ dom: valueDom, label: "Prix de souscription" })
-            const withdraws = this._extractFromNodes({ dom: valueDom, label: "Valeur de retrait" })
-    
-            const distributionDom = await JSDOM.fromURL(`https://www.scpi-lab.com/scpi.php?vue=distribution&produit_id=${scpi.scpiLabId}`)
-            const distributionYears = this._extractFromNodes({ dom: distributionDom, label: "years" })
-            const dividendeCourant = this._extractFromNodes({ dom: distributionDom, label: "Dividende courant" })
-            const dividendePV = this._extractFromNodes({ dom: distributionDom, label: "Dividende de PV" })
-    
-            return (new Array(years.length)).fill(null).map((_, index) => {
-                const answer = {
-                    year: years.at(index),
-                    subscription: subscriptions.at(index),
-                    withdraw: withdraws.at(index),
-                    dividendeCourant: dividendeCourant.at(distributionYears.indexOf(years.at(index) ?? 0)),
-                    dividendePV: dividendePV.at(distributionYears.indexOf(years.at(index) ?? 0)),
-                }
-                if (Array.from(Object.values(answer)).some(value => value === undefined)) throw new Error()
-                return answer as { [K in keyof typeof answer]: Exclude<typeof answer[K], undefined> }
-            })
+            if (!scpi._cache) {
+                const valueDom = await JSDOM.fromURL(`https://www.scpi-lab.com/scpi.php?vue=valorisation&produit_id=${scpi.scpiLabId}`)
+                const years = this._extractFromNodes({ dom: valueDom, label: "years" })
+                const subscriptions = this._extractFromNodes({ dom: valueDom, label: "Prix de souscription" })
+                const withdraws = this._extractFromNodes({ dom: valueDom, label: "Valeur de retrait" })
+
+                const distributionDom = await JSDOM.fromURL(`https://www.scpi-lab.com/scpi.php?vue=distribution&produit_id=${scpi.scpiLabId}`)
+                const distributionYears = this._extractFromNodes({ dom: distributionDom, label: "years" })
+                const dividendeCourant = this._extractFromNodes({ dom: distributionDom, label: "Dividende courant" })
+                const dividendePV = this._extractFromNodes({ dom: distributionDom, label: "Dividende de PV" })
+                scpi._cache = (new Array(years.length)).fill(null).map((_, index) => {
+                    let dividendeCourantTest = dividendeCourant.at(distributionYears.indexOf(years.at(index) ?? 0))
+                    dividendeCourantTest = Number.isNaN(dividendeCourantTest) ? 0 : dividendeCourantTest
+                    let dividendePVtest = dividendePV.at(distributionYears.indexOf(years.at(index) ?? 0))
+                    dividendePVtest = Number.isNaN(dividendePVtest) ? 0 : dividendePVtest
+                    const answer = {
+                        year: years.at(index),
+                        subscription: subscriptions.at(index),
+                        withdraw: withdraws.at(index),
+                        dividendeCourant: dividendeCourantTest,
+                        dividendePV: dividendePVtest,
+                    }
+                    if (Array.from(Object.values(answer)).some(value => value === undefined)) throw new Error()
+                    return answer as ScpiCacheObject
+                })
+            }
+            return scpi._cache
         },
-    
+
         _extractFromNodes({ dom, label }: { dom: JSDOM, label: "years" | string }) {
             const rows = dom.window.document
                 .querySelector("#table_scpi_bloc_cr_part")

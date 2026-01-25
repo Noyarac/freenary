@@ -35,6 +35,7 @@ export default function Table(
                     <th>Type</th>
                     <th>Invested</th>
                     <th>Value</th>
+                    <th>Dividends per month</th>
                     <th>Selected</th>
                 </tr>
             </thead>
@@ -47,6 +48,7 @@ export default function Table(
                     <td></td>
                     <td>{formatNumber(investments.reduce((prev, cur) => prev += cur.invested, 0))} €</td>
                     <td>{formatNumber(investments.reduce((prev, cur) => prev += cur.value, 0))} €</td>
+                    <td>{formatNumber(investments.reduce((prev, cur) => prev += cur.dividendsPerMonth, 0))} €</td>
                     <td></td>
                 </tr>
             </tfoot>
