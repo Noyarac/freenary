@@ -1,13 +1,11 @@
-import Investment from "@/entities/Investment";
-
-type InvestmentProperties = {
-    [K in keyof Investment as Investment[K] extends Function ? never : K]: Investment[K]
-}
-
-export interface InvestmentDTO extends InvestmentProperties {
+interface InvestmentDTO {
+    id: string
     type: string
-    selected: boolean
     invested: number
+    selected: boolean
     value: number
     dividendsPerMonth: number
+    name: string
+
 }
+export default InvestmentDTO

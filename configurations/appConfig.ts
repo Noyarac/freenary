@@ -10,7 +10,8 @@ if (!parsed.success) {
     process.exit(1)
 }
 
-export const appConfig: { [K in keyof typeof configSchema.def.shape]: string } = {} as any;
+const appConfig: { [K in keyof typeof configSchema.def.shape]: string } = {} as any;
 for (const key of Object.keys(configSchema.def.shape) as Array<keyof typeof configSchema.def.shape>) {
     appConfig[key] = parsed.data ? parsed.data[key] : ""
 }
+export default appConfig

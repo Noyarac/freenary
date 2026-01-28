@@ -1,12 +1,10 @@
-import { ChildEntity, Column } from "typeorm"
+import { ChildEntity } from "typeorm"
 import Investment from "@/entities/Investment"
-import StockService, { StockServiceObject } from "@/services/StockService"
+import InvestmentInterface from "@/types/Investment"
+import InvestmentProvider from "@/types/InvestmentProvider"
+import StockProviderWrapper from "@/prodivers/StockProvider"
 
 @ChildEntity()
-export default class Stock extends Investment {
-    @Column() ticker!: string
-
-    getService(): StockServiceObject {
-        return StockService(this)
-    }
+export default class Stock extends Investment implements InvestmentInterface {
+    get provider(): InvestmentProvider { return StockProviderWrapper(this) }
 }

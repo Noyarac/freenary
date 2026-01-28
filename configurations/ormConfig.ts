@@ -2,9 +2,8 @@ import "reflect-metadata"
 import * as dotenv from "dotenv"
 dotenv.config()
 import { DataSource, ObjectLiteral, Repository } from "typeorm"
-import { appConfig } from "@/configurations/appConfig"
+import appConfig from "@/configurations/appConfig"
 import Investment from "@/entities/Investment"
-import Distribution from "@/entities/Distribution"
 import Scpi from "@/entities/Scpi"
 import Stock from "@/entities/Stock"
 import Movement from "@/entities/Movement"
@@ -15,7 +14,7 @@ const options: any = {
     type: "sqlite",
     database: appConfig.DB_PATH,
     synchronize: false,
-    entities: [Investment, Distribution, Movement, Scpi, Stock],
+    entities: [Investment, Movement, Scpi, Stock],
 }
 if (isTypeORMCLI) {
     options.migrations = ["migrations/**/*{.js,.ts}"]

@@ -10,10 +10,4 @@ export default class Movement {
     @ManyToOne("Investment", (investment: Investment) => investment.movements, { nullable: false, onDelete: "CASCADE" })
     @JoinColumn()
     investment!: Investment
-
-    static fromJSON(obj: any) {
-        obj.date = new Date(obj.date)
-        return Object.assign(new Movement(), obj)
-    }
-        
 }

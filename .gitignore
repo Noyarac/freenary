@@ -42,3 +42,5 @@ next-env.d.ts
 
 *.sqlite
 *.vscode
+.continue
+migrations/9999999999999-fixtures.ts

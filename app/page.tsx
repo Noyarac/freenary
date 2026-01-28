@@ -11,7 +11,7 @@ export default function Home() {
     }, [])
 
     const fetchInvestments = async () => {
-        const res = await fetch("/api/investment")
+        const res = await fetch("/api/investment/all")
         const investments: InvestmentDTO[] = await res.json()
         setInvestments(investments)
     }

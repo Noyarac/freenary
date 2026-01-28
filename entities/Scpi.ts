@@ -1,16 +1,10 @@
-import { ChildEntity, Column } from "typeorm"
+import { ChildEntity } from "typeorm"
 import Investment from "@/entities/Investment"
-import ScpiService, { ScpiServiceObject } from "@/services/ScpiService"
-import { ScpiCacheObject } from "@/types/ScpiCache"
+import InvestmentInterface from "@/types/Investment"
+import ScpiProviderWrapper from "@/prodivers/ScpiProvider"
+import InvestmentProvider from "@/types/InvestmentProvider"
 
 @ChildEntity()
-export default class Scpi extends Investment {
-    @Column() organism!: string
-    @Column() delay!: number
-    @Column() scpiLabId!: number
-    _cache?: ScpiCacheObject[]
-
-    getService(): ScpiServiceObject {
-        return ScpiService(this)
-    }
+export default class Scpi extends Investment implements InvestmentInterface {
+    get provider(): InvestmentProvider { return ScpiProviderWrapper(this) }
 }
