@@ -4,50 +4,31 @@ import InvestmentDTO from "@/types/InvestmentDTO"
 import InvestmentInterface from "@/types/Investment"
 import { In } from "typeorm"
 
-type InvestmentBasicDTO = {
-  id: string
-  type: string
-  invested: number
-  selected: boolean
-}
-
-type InvestmentDetailsDTO = {
-  value: number
-  dividendsPerMonth: number
-  name: string
-}
-
-export type InvestmentResultMap = {
-  basic: InvestmentBasicDTO
-  details: InvestmentDetailsDTO
-}
-
 export default {
     repository: await getRepository(Investment),
 
-    async getInvestments<T extends keyof InvestmentResultMap>(mode: T, ids?: string[]): Promise<InvestmentResultMap[T][]> {
+    async getInvestments({ ids, detailed }: { ids?: string[], detailed?: boolean }): Promise<InvestmentDTO[]> {
         const whereClause = ids ? { id: In(ids) } : {}
-        const investments = await this.repository.findBy(whereClause)
+        const investments = (await this.repository.findBy(whereClause)) as InvestmentInterface[]
 
-        const getBasic = async (investment: InvestmentInterface): Promise<InvestmentBasicDTO> => ({
+        return Promise.all(investments.map(async investment => {
+            let name, value, dividendsPerMonth
+            if (detailed) {
+                const quantity = this._getInvestedOrQuantity("quantity", investment)
+                const details = await investment.provider.find()
+                name = details.name
+                value = details.unitValue * quantity
+                dividendsPerMonth = details.unitYearlyDividends * quantity / 12
+            }
+            return {
                 id: investment.id,
                 type: investment.constructor.name,
                 invested: this._getInvestedOrQuantity("price", investment),
-                selected: true,
-            })
-        const getDetails = async (investment: InvestmentInterface): Promise<InvestmentDetailsDTO> => {
-            const { unitValue, unitYearlyDividends, name } = await investment.provider.find()
-            const quantity = this._getInvestedOrQuantity("quantity", investment)
-            return {
-                value: unitValue * quantity,
-                dividendsPerMonth: unitYearlyDividends * quantity / 12,
                 name,
-            }
-        }
-
-        const mapper = mode === "basic" ? getBasic : getDetails
-
-        return Promise.all((investments as InvestmentInterface[]).map(inv => mapper(inv))) as Promise<InvestmentResultMap[T][]>
+                value,
+                dividendsPerMonth
+            } as InvestmentDTO
+        }))
     },
 
     _getInvestedOrQuantity(mode: "price" | "quantity", investment: Investment) {

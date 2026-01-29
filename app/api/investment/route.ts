@@ -1,11 +1,11 @@
-import InvestmentService, { InvestmentResultMap } from "@/services/InvestmentService"
-import { sanitize, sanitizeId } from "@/utils"
+import InvestmentService from "@/services/InvestmentService"
+import { sanitize, sanitizeIds } from "@/utils"
 import { NextRequest, NextResponse } from "next/server"
 import z from "zod"
 
 export async function GET(req: NextRequest) {
-    const id = await sanitizeId(req)
-    const { mode } = await sanitize(req, "query", { mode: z.string().refine(v => ["basic", "details"].includes(v)) })
-    const responseObject = await InvestmentService.getInvestments(mode as keyof InvestmentResultMap, id)
+    const ids = await sanitizeIds(req)
+    const { detailed } = await sanitize(req, "query", { detailed: z.coerce.boolean().optional() })
+    const responseObject = await InvestmentService.getInvestments({ ids, detailed})
     return NextResponse.json(responseObject)
 }

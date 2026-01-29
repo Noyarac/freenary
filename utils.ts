@@ -31,12 +31,10 @@ export async function sanitize<T extends z.ZodRawShape>(
   return schema.parse(toParse) as z.infer<z.ZodObject<T>>
 }
 
-export async function sanitizeId(
-  req: NextRequest,
-) {
+export async function sanitizeIds(req: NextRequest) {
   const singleIdSchema = z.string().regex(appConfig.investmentIdRegex, "Investment id bad format.")
   const querySchema = {
-    id: z.preprocess(
+    ids: z.preprocess(
       val => {
         if (typeof val !== "string" || val.trim() === "") return undefined
         return val.split(",")
@@ -45,7 +43,7 @@ export async function sanitizeId(
         .optional()
     )
   }
-  const { id } = await sanitize(req, "query", querySchema)
-  return id
+  const { ids } = await sanitize(req, "query", querySchema)
+  return ids
 }
 

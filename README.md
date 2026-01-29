@@ -9,20 +9,28 @@ Optional: copy `.env.example` to `.env` and fill it with the environment variabl
 Install the dependancies:
 
 ```bash
-pnpm i
+bun i
 ```
 
 Run the migrations:
 
 ```bash
-pnpm migration:run
+bun migration:run
 ```
 
 Run the development server:
 
 ```bash
-pnpm dev
+bun dev
 ```
 
 ## Environment variables
 - DB_PATH: string, optional, the path to your .sqlite file.
+
+
+## API endpoints
+### GET /api/investment
+    - Parameters
+        - id: optionnal, one or more ids (comma separated). If none are provided, returns all.
+        - mode: optionnal, either `"basic"` or `"details"`. Default: `"basic"`
+    - Returns a list of investmentDTO
