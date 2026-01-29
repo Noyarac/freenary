@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { InvestmentDTO } from "@/types/InvestmentDTO"
+import InvestmentDTO from "@/types/InvestmentDTO"
 import Table from "@/components/Table"
 
 export default function Home() {
@@ -11,12 +11,12 @@ export default function Home() {
     }, [])
 
     const fetchInvestments = async () => {
-        const res = await fetch("/api/investment/all")
+        const res = await fetch("/api/investment/?mode=basic")
         const investments: InvestmentDTO[] = await res.json()
         setInvestments(investments)
     }
 
-    const toggleSelected = (ids: number[]) => {
+    const toggleSelected = (ids: string[]) => {
         setInvestments(investments.map(inv => {
             inv.selected = ids.includes(inv.id) ? !inv.selected : inv.selected; return inv
         }))

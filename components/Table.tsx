@@ -1,7 +1,7 @@
 import InvestmentLine from "@/components/InvestmentLine"
 import InvestmentTag from "@/components/InvestmentTag"
 import { formatNumber } from "@/utils"
-import { InvestmentDTO } from "@/types/InvestmentDTO"
+import InvestmentDTO from "@/types/InvestmentDTO"
 
 
 export default function Table(
@@ -12,10 +12,13 @@ export default function Table(
     }: {
         investments: InvestmentDTO[],
         selected: boolean,
-        toggleSelected: (ids: number[]) => void
+        toggleSelected: (ids: string[]) => void
     }
 ) {
-    investments = investments.filter(inv => inv.selected === selected)
+    investments = investments
+        .filter(inv => inv.selected === selected)
+        .sort((a, b) => b.invested - a.invested)
+        .sort((a, b) => a.type < b.type ? 1 : 0)
     const types = [...(new Set(investments.map(inv => inv.type)))]
     const groups = types.map(type => {
         return {
@@ -26,29 +29,40 @@ export default function Table(
         }
     })
 
+
     return <section style={{ margin: "1rem" }}>
         <h2>{selected ? "Selected" : "Unselected"}</h2>
-        <table>
+        <table style={{width: "100%", tableLayout: "fixed"}}>
+            <colgroup>
+                <col span={1} />
+                <col span={1} style={{width: "12ch"}}/>
+                <col span={1} style={{width: "12ch"}}/>
+                <col span={1} style={{width: "12ch"}}/>
+                <col span={1} style={{width: "24ch"}}/>
+                <col span={1} style={{width: "12ch"}}/>
+            </colgroup>
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th>Type</th>
-                    <th>Invested</th>
-                    <th>Value</th>
-                    <th>Dividends per month</th>
-                    <th>Selected</th>
+                    <th style={{whiteSpace: "nowrap"}}>Type</th>
+                    <th style={{whiteSpace: "nowrap"}}>Invested</th>
+                    <th style={{whiteSpace: "nowrap"}}>Value</th>
+                    <th style={{whiteSpace: "nowrap"}}>Dividends per month</th>
+                    <th style={{whiteSpace: "nowrap"}}>Selected</th>
                 </tr>
             </thead>
             <tbody>
-                {investments.map(investement => <InvestmentLine key={investement.name} investment={investement} toggleSelected={toggleSelected} />)}
+                {investments.map(investement => <InvestmentLine key={investement.id} investment={investement} toggleSelected={toggleSelected} />)}
             </tbody>
             <tfoot>
                 <tr>
                     <th>Total</th>
                     <td></td>
                     <td>{formatNumber(investments.reduce((prev, cur) => prev += cur.invested, 0))} €</td>
-                    <td>{formatNumber(investments.reduce((prev, cur) => prev += cur.value, 0))} €</td>
-                    <td>{formatNumber(investments.reduce((prev, cur) => prev += cur.dividendsPerMonth, 0))} €</td>
+                    <td>To be fixed</td>
+                    <td>To be fixed</td>
+                    {/* <td>{formatNumber(investments.reduce((prev, cur) => prev += cur.value, 0))} €</td>
+                    <td>{formatNumber(investments.reduce((prev, cur) => prev += cur.dividendsPerMonth, 0))} €</td> */}
                     <td></td>
                 </tr>
             </tfoot>
