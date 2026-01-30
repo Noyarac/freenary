@@ -35,6 +35,7 @@ export default function Table(
                 <col span={1} style={{ width: "12ch" }} />
                 <col span={1} style={{ width: "12ch" }} />
                 <col span={1} style={{ width: "24ch" }} />
+                <col span={1} style={{ width: "24ch" }} />
                 <col span={1} style={{ width: "12ch" }} />
             </colgroup>
             <thead>
@@ -44,6 +45,7 @@ export default function Table(
                     <th style={{ whiteSpace: "nowrap" }}>Invested</th>
                     <th style={{ whiteSpace: "nowrap" }}>Value</th>
                     <th style={{ whiteSpace: "nowrap" }}>Dividends per month</th>
+                    <th style={{ whiteSpace: "nowrap" }}>Capital gain per month</th>
                     <th style={{ whiteSpace: "nowrap" }}>Selected</th>
                 </tr>
             </thead>
@@ -57,6 +59,7 @@ export default function Table(
                     <td>{formatNumber(investments.reduce((prev, cur) => prev += cur.invested, 0))} €</td>
                     <td>{formatNumber(investments.reduce((prev, cur) => prev += cur.value ?? 0, 0))} €</td>
                     <td>{formatNumber(investments.reduce((prev, cur) => prev += cur.dividendsPerMonth ?? 0, 0))} €</td>
+                    <td>{formatNumber(investments.reduce((prev, cur) => prev += cur.latentCapitalGain ?? 0, 0))} €</td>
                     <td></td>
                 </tr>
             </tfoot>

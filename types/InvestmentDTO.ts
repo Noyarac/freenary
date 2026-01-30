@@ -5,6 +5,7 @@ interface InvestmentDTO {
     selected?: boolean
     name?: string,
     value?: number,
-    dividendsPerMonth?: number
+    dividendsPerMonth?: number,
+    latentCapitalGain: number
 }
 export default InvestmentDTO

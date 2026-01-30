@@ -13,6 +13,7 @@ export default function InvestmentLine({ investment }: { investment: InvestmentD
             <td>{formatNumber(investment.invested)} €</td>
             <td>{investment.value !== undefined ? (formatNumber(investment.value) + " €") : <Spinner />}</td>
             <td>{investment.dividendsPerMonth !== undefined ? (formatNumber(investment.dividendsPerMonth) + " €") : <Spinner />}</td>
+            <td>{investment.latentCapitalGain !== undefined ? (formatNumber(investment.latentCapitalGain) + " €") : <Spinner />}</td>
             <td><input type="checkbox" checked={investment.selected} onChange={() => toggleSelected([investment.id])} /></td>
         </tr>
     )

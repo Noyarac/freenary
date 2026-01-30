@@ -4,7 +4,7 @@ import { JSDOM } from "jsdom"
 
 const ScpiProviderWrapper = (scpi: Scpi) => { return {
     async find() {
-        const answer = { unitValue: 0, unitYearlyDividends: 0, name: ""}
+        const answer = { unitValue: 0, unitYearlyDividends: 0, name: "", unitLatentCapitalGain: 0}
         const dom = await JSDOM.fromURL(`https://www.scpi-lab.com/scpi.php?vue=synthese&produit_id=${scpi.id}`)
         const infoBoxes = dom.window.document.querySelectorAll(".info-box-4 .content")
         const scrapData: {propertyName: keyof Omit<typeof answer, "name">, label: string}[] = [
