@@ -1,8 +1,8 @@
-import Scpi from "@/entities/Scpi"
+import type Scpi from "@/entities/Scpi"
 import InvestmentProvider from "@/types/InvestmentProvider"
 import { JSDOM } from "jsdom"
 
-const ScpiProviderWrapper = (scpi: Scpi) => { return {
+const ScpiProviderWrapper = (scpi: Scpi, isNueProp = false) => { return {
     async find() {
         const answer = { unitValue: 0, unitYearlyDividends: 0, name: "", unitLatentCapitalGain: 0}
         const dom = await JSDOM.fromURL(`https://www.scpi-lab.com/scpi.php?vue=synthese&produit_id=${scpi.id}`)
@@ -12,6 +12,7 @@ const ScpiProviderWrapper = (scpi: Scpi) => { return {
             { propertyName: "unitYearlyDividends", label: "Distribution nette"} ,
         ]
         for (const { propertyName, label } of scrapData) {
+            if (isNueProp && propertyName === "unitYearlyDividends") continue
             const nodesArray = Array.from(infoBoxes)
                     .find(box => box.querySelector(".text")?.textContent.includes(label))
                     ?.querySelector(".number")

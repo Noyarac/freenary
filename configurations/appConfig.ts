@@ -11,7 +11,7 @@ if (!parsed.success) {
 }
 
 const hardCoded = {
-    investmentIdRegex: /^(\d{1,4})|([A-Z]+\.[A-Z]+)$/
+    investmentIdRegex: /^(\d{1,4})|([A-Z]+\.[A-Z]+)|Livret A|LDDS$/
 }
 
 const appConfig: z.infer<typeof configSchema> & typeof hardCoded = {

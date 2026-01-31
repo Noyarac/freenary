@@ -7,6 +7,8 @@ import Investment from "@/entities/Investment"
 import Scpi from "@/entities/Scpi"
 import Stock from "@/entities/Stock"
 import Movement from "@/entities/Movement"
+import NueProp from "@/entities/NueProp"
+import Livret from "@/entities/Livret"
 
 const isTypeORMCLI = !!process.env.TYPEORM_CLI || process.argv.some(arg => arg.includes("typeorm"))
 
@@ -14,7 +16,7 @@ const options: any = {
     type: "sqlite",
     database: appConfig.DB_PATH,
     synchronize: false,
-    entities: [Investment, Movement, Scpi, Stock],
+    entities: [Investment, Movement, Scpi, Stock, NueProp, Livret],
 }
 if (isTypeORMCLI) {
     options.migrations = ["migrations/**/*{.js,.ts}"]

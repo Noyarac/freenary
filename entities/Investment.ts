@@ -1,4 +1,4 @@
-import InvestmentSubType from "@/types/InvestmentType"
+import InvestmentSubType from "@/types/InvestmentSubType"
 import { Entity, OneToMany, PrimaryColumn, TableInheritance } from "typeorm"
 import type Movement from "@/entities/Movement"
 

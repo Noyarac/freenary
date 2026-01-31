@@ -1,5 +1,7 @@
 enum InvestmentSubType {
     Scpi = "Scpi",
-    Stock = "Stock"
+    Stock = "Stock",
+    NueProp = "NueProp",
+    Livret = "Livret",
 }
 export default InvestmentSubType
