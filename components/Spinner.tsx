@@ -16,8 +16,6 @@ export default function Spinner({ size = 24, color = "#555" }: SpinnerProps) {
   }
 
   return (
-    <div style={style} role="status" aria-label="Loading">
-      <span className="sr-only">Loading...</span>
-    </div>
+    <div style={style} role="status" aria-label="Loading"></div>
   )
 }

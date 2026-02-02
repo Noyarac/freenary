@@ -1,0 +1,322 @@
+/* Reset & base */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: Arial, sans-serif;
+  font-size: 100%; /* 16px */
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  background-color: var(--color-body);
+  color: var(--color-text);
+}
+
+body {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: var(--header-height) 1fr auto;
+  grid-template-columns: var(--sidebar-width) 1fr;
+}
+
+
+/* ------------------------------------------------------------
+   Theme variables (OKLCH) – light & dark
+   ------------------------------------------------------------ */
+:root {
+  /* Dark theme defaults */
+  --header-height: 3rem;
+  --sidebar-width: 20ch;
+  --color-body: oklch(26.209% 0.00952 248.267);
+  --color-text: oklch(0.95 0.01 120);
+  --color-text-on-color: var(--color-text);
+  --color-primary-hue: 258;
+  --color-primary-thin: oklch(80% 0.17 var(--color-primary-hue));
+  --color-primary-thick: oklch(50% 0.18 var(--color-primary-hue));
+  --color-secondary: oklch(35% 0.01 var(--color-primary-hue));
+  --color-tertiary: oklch(50% 0.01 var(--color-primary-hue));
+  --color-success: oklch(55.203% 0.12339 157.038);
+  --color-danger: oklch(59.153% 0.20203 21.222);
+}
+
+html[data-theme="light"] {
+  --color-body: oklch(0.98 0.01 120);
+  --color-text: oklch(0.15 0.02 120);
+  --color-text-on-color: var(--color-body);
+  --color-primary-thin: oklch(50% 0.30 var(--color-primary-hue));
+  --color-primary-thick: oklch(55% 0.18 var(--color-primary-hue));
+  --color-secondary: oklch(92% 0 0);
+  --color-tertiary: oklch(85% 0 0);
+  --color-success: oklch(0.55 0.12 140);
+  --color-danger: oklch(0.55 0.18 30);
+}
+
+
+/* ------------------------------------------------------------
+   Layout – header, nav (sidebar), main, footer
+   ------------------------------------------------------------ */
+header {
+  position: sticky;
+  top: 0;
+  height: var(--header-height);
+  background: var(--color-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+  z-index: 1000;
+  grid-column: 1 / -1;
+}
+
+/* Burger & theme toggle buttons */
+header button {
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  width: 2rem;
+  height: 2rem;
+}
+
+button.burger::before {
+  content: "";
+  display: block;
+  width: 1.5rem;
+  height: 1.5rem;
+  background-color: var(--color-text);
+  mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 960 960'><path d='M120 720v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z'/></svg>") no-repeat center / contain;
+}
+
+
+button.burger.open::before {
+  content: "";
+  display: block;
+  width: 1.5rem;
+  height: 1.5rem;
+  background-color: var(--color-text);
+  mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 960"><path d="m256 760-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>');
+}
+
+button.switchTheme::before {
+  content: "";
+  display: block;
+  width: 1.5rem;
+  height: 1.5rem;
+  background-color: var(--color-text);
+  mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12,22 C17.5228475,22 22,17.5228475 22,12 C22,6.4771525 17.5228475,2 12,2 C6.4771525,2 2,6.4771525 2,12 C2,17.5228475 6.4771525,22 12,22 Z M12,20 L12,4 C16.418278,4 20,7.581722 20,12 C20,16.418278 16.418278,20 12,20 Z" /></svg>') no-repeat center / contain;
+}
+
+
+/* Sidebar navigation */
+nav {
+  position: fixed;
+  top: var(--header-height);
+  left: 0;
+  width: var(--sidebar-width);
+  background: var(--color-body);
+  overflow-y: auto;
+  padding: 1rem;
+  transition: transform 0.3s ease;
+  z-index: 500; /* below header */
+}
+
+/* Hidden on mobile by default */
+nav.closed {
+  transform: translateX(-100%);
+}
+
+/* Main content */
+main {
+  margin: 0 auto;
+  padding: 0 3rem;
+  max-width: 100ch;
+  width: 100%;
+  grid-row: 2;
+  /* grid-column set for desktop via media query */
+}
+
+footer {
+  background: var(--color-secondary);
+  color: var(--color-text);
+  text-align: center;
+  padding: 0.5rem 1rem;
+  grid-column: 1 / -1;
+  margin-top: 3rem;
+}
+
+/* ------------------------------------------------------------
+   Typography
+   ------------------------------------------------------------ */
+h1 {font-size: clamp(2rem, 5vw, 3rem); margin: 0.5em 0;}
+header h1 {font-size: 1.5rem}
+h2 {font-size: clamp(1.75rem,4.5vw,2.5rem); margin:4rem 0 1rem 0;}
+h3 {font-size: clamp(1.5rem,4vw,2rem); margin:0.5em 0;}
+h4 {font-size: clamp(1.25rem,3.5vw,1.75rem); margin:0.5em 0;}
+h5 {font-size: clamp(1rem,3vw,1.5rem); margin:0.5em 0;}
+h6 {font-size: clamp(0.875rem,2.5vw,1.25rem); margin:0.5em 0;}
+
+p {margin: 0.5rem 0;}
+
+a {
+  color: var(--color-primary-thin);
+  text-decoration: underline;
+}
+
+a:hover {text-decoration: none;}
+
+mark, code, kbd {
+  padding: 0.13rem 0.25rem;
+  border-radius: 0.2rem;
+  color: var(--color-text);
+  border: 1px solid var(--color-tertiary);
+}
+
+mark {
+  border: 0;
+  background: var(--color-primary-thick);
+  color: var(--color-text-on-color);
+}
+
+code, kbd {
+  font-family: monospace;
+  background: var(--color-secondary);
+}
+
+pre {
+  background: var(--color-secondary);
+  padding: 1rem;
+  overflow-x: auto;
+}
+pre code {
+  border: 0;
+  background-color: none;
+}
+
+blockquote {
+  border-left: 0.25rem solid var(--color-primary-thick);
+  margin: 1rem 0;
+  padding: 0.5rem 1rem;
+  font-style: italic;
+}
+
+/* Lists */
+ul, ol {margin: 0.5rem 0 0.5rem 1.5rem;}
+li {margin: 0.25rem 0;}
+
+dl {margin: 0.5rem 0;}
+
+dt {font-weight: bold;}
+
+dd {margin-bottom: 0.5rem;}
+
+/* Tables */
+table {border-collapse: collapse; width: 100%; margin: 1rem 0;}
+th, td {border: 1px solid var(--color-tertiary); padding: 0.5rem; text-align: left;}
+thead {background: var(--color-tertiary)}
+thead tr th:not(:last-child) { border-right: 1px solid var(--color-body)}
+
+tfoot {background: var(--color-secondary)}
+
+/* Forms */
+form {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  padding-right: 30%;
+}
+
+input,
+select,
+textarea,
+button {
+  display: inline-block;
+  font: inherit;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--color-tertiary);
+  border-radius: 0.25rem;
+  background: none;
+  color: var(--color-text);
+  margin-bottom: 1rem;
+}
+
+select, button {
+  cursor: pointer;
+}
+
+button {
+  background: var(--color-primary-thick);
+  color: var(--color-text-on-color);
+  border: 0px;
+  padding: 0.5rem 1rem;
+}
+
+/* Secondary button – adjacent button */
+button + button {
+  background: var(--color-tertiary);
+  color: var(--color-text);
+}
+
+/* Form labels */
+label {
+  display: inline-block;
+  margin-bottom: 0.25rem;
+}
+
+/* Focus visible */
+:focus-visible {
+  outline: 2px solid var(--color-primary-thin);
+  outline-offset: 2px;
+}
+
+/* Images & figures */
+img {max-width: 100%; height: auto; display: block;}
+figure {margin: 1rem 0;}
+figcaption {font-size: 0.875rem; text-align: center; color: var(--color-text);}
+
+/* Details / summary */
+summary {cursor: pointer; font-weight: bold;}
+
+/* ------------------------------------------------------------
+   Utility classes (optional)
+   ------------------------------------------------------------ */
+.container {max-width: 1200px; margin: 0 auto; padding: 0 1rem;}
+.row {display: flex; flex-wrap: wrap; gap: 1rem;}
+.col {flex: 1; min-width: 0;}
+
+/* ------------------------------------------------------------
+   Media queries – mobile adjustments
+   ------------------------------------------------------------ */
+@media (max-width: 599px) {
+  body {
+    grid-template-columns: 1fr;
+  }
+  main {
+    grid-column: 1 / -1;
+    padding: 0 1rem;
+  }
+  nav {
+    transform: translateX(-100%);
+    width: 80vw;
+    height: 100%;
+    background: var(--color-secondary);
+  }
+  nav.open {
+    transform: translateX(0);
+  }
+}
+
+@media (min-width: 600px) {
+  button.burger {display: none;}
+  main {
+    grid-column: 2;
+  }
+  nav {
+    transform: translateX(0);
+  }
+}
+
+/* End of style.css */
