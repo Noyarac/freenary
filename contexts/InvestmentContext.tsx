@@ -29,7 +29,9 @@ export function InvestmentContextProvider({ children }: { children: ReactNode })
       )
     }
 
-    updateInvestmentBasic().then(basic => basic.map(updateInvestmentDetailed))
+    updateInvestmentBasic().then(basic => {
+      basic.map(updateInvestmentDetailed)
+    })
   }, [])
 
   const toggleSelected = (ids: string[]) => {

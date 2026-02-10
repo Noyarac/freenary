@@ -1,8 +1,11 @@
+@import url("https://noyarac.github.io/cclf/cclf.css");
+
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .tag {
     padding: 0.25rem 0.5rem;
     border-radius: 0.25rem;
+    color: var(--color-text-on-color);
 }
 
 main {

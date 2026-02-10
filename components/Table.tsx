@@ -3,6 +3,7 @@ import InvestmentTag from "@/components/InvestmentTag"
 import { formatNumber } from "@/utils"
 import InvestmentDTO from "@/types/InvestmentDTO"
 import { useInvestmentContext } from "@/contexts/InvestmentContext"
+import { useEffect, useState } from "react"
 
 
 export default function Table(
@@ -15,16 +16,17 @@ export default function Table(
     }
 ) {
     const { toggleSelected } = useInvestmentContext()
-    investments = investments
-        .sort((a, b) => b.invested - a.invested)
-        .sort((a, b) => a.type < b.type ? 1 : 0)
+    const [hiddenStates, setHiddenStates] = useState<{type: string; hidden: boolean}[]>([])
     const types = [...(new Set(investments.map(inv => inv.type)))]
     const groups = types.map(type => ({
         type: type,
-        ids: investments
+        investments: investments
             .filter(inv => inv.type === type)
-            .map(inv => inv.id)
+            .sort((a, b) => b.invested - a.invested)
     }))
+    useEffect(() => {
+        if (hiddenStates.length === 0) setHiddenStates(types.map(type => ({ type: type, hidden: true })))
+    },[investments.map(inv => inv.id).join()])
 
     return <section style={{ margin: "1rem" }}>
         <h2>{selected ? "Selected" : "Unselected"}</h2>
@@ -33,29 +35,50 @@ export default function Table(
                 <col span={1} />
                 <col span={1} style={{ width: "12ch" }} />
                 <col span={1} style={{ width: "12ch" }} />
-                <col span={1} style={{ width: "12ch" }} />
                 <col span={1} style={{ width: "24ch" }} />
                 <col span={1} style={{ width: "24ch" }} />
                 <col span={1} style={{ width: "12ch" }} />
             </colgroup>
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th style={{ whiteSpace: "nowrap" }}>Type</th>
-                    <th style={{ whiteSpace: "nowrap" }}>Invested</th>
-                    <th style={{ whiteSpace: "nowrap" }}>Value</th>
-                    <th style={{ whiteSpace: "nowrap" }}>Dividends per month</th>
-                    <th style={{ whiteSpace: "nowrap" }}>Capital gain per month</th>
-                    <th style={{ whiteSpace: "nowrap" }}>Selected</th>
+                    <th scope="col">Name</th>
+                    <th scope="col" style={{ whiteSpace: "nowrap" }}>Invested</th>
+                    <th scope="col" style={{ whiteSpace: "nowrap" }}>Value</th>
+                    <th scope="col" style={{ whiteSpace: "nowrap" }}>Dividends per month</th>
+                    <th scope="col" style={{ whiteSpace: "nowrap" }}>Capital gain per month</th>
+                    <th scope="col" style={{ whiteSpace: "nowrap" }}>Selected</th>
                 </tr>
             </thead>
-            <tbody>
-                {investments.map(investement => <InvestmentLine key={investement.id} investment={investement} />)}
-            </tbody>
+            { groups.map(group => (
+                    <tbody key={group.type}>
+                            <tr
+                                onClick={() => setHiddenStates(prev =>
+                                    prev.map(state =>
+                                        state.type === group.type
+                                            ? { ...state, hidden: !state.hidden }
+                                            : state
+                                    )
+                                )}
+                            >
+                                <th scope="rowgroup">{ group.type }</th>
+                                <td>{formatNumber(group.investments.reduce((prev, cur) => prev += cur.invested, 0))} €</td>
+                                <td>{formatNumber(group.investments.reduce((prev, cur) => prev += cur.value ?? 0, 0))} €</td>
+                                <td>{formatNumber(group.investments.reduce((prev, cur) => prev += cur.dividendsPerMonth ?? 0, 0))} €</td>
+                                <td>{formatNumber(group.investments.reduce((prev, cur) => prev += cur.latentCapitalGain ?? 0, 0))} €</td>
+                                <td></td>
+                            </tr>
+                        {group.investments.map(investement => (
+                            <InvestmentLine
+                                key={investement.id}
+                                investment={investement}
+                                hidden={hiddenStates.find(state => state.type === group.type)?.hidden ?? false}
+                            />
+                            ))}
+                    </tbody>
+                )) }
             <tfoot>
                 <tr>
-                    <th>Total</th>
-                    <td></td>
+                    <th scope="row">Total</th>
                     <td>{formatNumber(investments.reduce((prev, cur) => prev += cur.invested, 0))} €</td>
                     <td>{formatNumber(investments.reduce((prev, cur) => prev += cur.value ?? 0, 0))} €</td>
                     <td>{formatNumber(investments.reduce((prev, cur) => prev += cur.dividendsPerMonth ?? 0, 0))} €</td>
@@ -66,7 +89,7 @@ export default function Table(
         </table>
         <div style={{ display: "flex", gap: "0.25rem", alignItems: "center" }}>
             <div>{selected ? "Remove" : "Add"}</div>
-            {groups.map(group => <InvestmentTag key={group.type} tag={group.type} onClick={() => toggleSelected(group.ids)} />)}
+            {groups.map(group => <InvestmentTag key={group.type} tag={group.type} onClick={() => toggleSelected(group.investments.map(inv => inv.id))} />)}
         </div>
     </section>
 }

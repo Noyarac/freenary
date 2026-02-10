@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import "@/public/cclf.css"
 import "./globals.css";
 import { InvestmentContextProvider } from "@/contexts/InvestmentContext";
 
@@ -27,7 +26,7 @@ export default function RootLayout({
           {children}
         </InvestmentContextProvider>
         </main>
-        <script src="cclf.js"></script>
+        <script src="https://noyarac.github.io/cclf/cclf.js"></script>
       </body>
     </html>
   );
