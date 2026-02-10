@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { InvestmentContextProvider } from "@/contexts/InvestmentContext";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Freenary",
@@ -20,7 +21,11 @@ export default function RootLayout({
           <h1>Freenary</h1>
           <button className="switchTheme" aria-label="Toggle theme"></button>
         </header>
-        <nav></nav>
+        <nav>
+          <ul>
+            <li><Link href="/">Dashboard</Link></li>
+          </ul>
+        </nav>
         <main>
         <InvestmentContextProvider>
           {children}

@@ -46,7 +46,7 @@ export default function Table(
                     <th scope="col" style={{ whiteSpace: "nowrap" }}>Value</th>
                     <th scope="col" style={{ whiteSpace: "nowrap" }}>Dividends per month</th>
                     <th scope="col" style={{ whiteSpace: "nowrap" }}>Capital gain per month</th>
-                    <th scope="col" style={{ whiteSpace: "nowrap" }}>Selected</th>
+                    <th scope="col" style={{ whiteSpace: "nowrap" }}>Selection</th>
                 </tr>
             </thead>
             { groups.map(group => (

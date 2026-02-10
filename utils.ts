@@ -1,16 +1,19 @@
 import { NextRequest } from "next/server"
 import z from "zod"
 import appConfig from "./configurations/appConfig"
+import InvestmentSubType from "./types/InvestmentSubType"
 
 export function formatNumber(number: number) { return Intl.NumberFormat('en', { notation: 'compact' }).format(number) }
 
-export function getHue(str: string, s = 40, l = 30) {
-  let hash = 0
-  for (let i = 0; i < str.length; i++) {
-    hash = str.charCodeAt(i) + ((hash << 6) - hash)
-  }
-  const h = Math.abs(hash) % 360
+export function getHue(type: InvestmentSubType, s = 40, l = 30) {
+  const enumArray = Object.values(InvestmentSubType).filter(v => typeof v === "string")
+  const h = (enumArray.indexOf(type) / enumArray.length * 360 + 10) % 360
   return `hsl(${h}, ${s}%, ${l}%)`
+  // let hash = 0
+  // for (let i = 0; i < str.length; i++) {
+  //   hash = str.charCodeAt(i) + ((hash << 6) - hash)
+  // }
+  // const h = Math.abs(hash) % 360
 }
 
 export async function sanitize<T extends z.ZodRawShape>(
