@@ -1,9 +1,11 @@
 import InvestmentLine from "@/components/InvestmentLine"
 import InvestmentTag from "@/components/InvestmentTag"
-import { formatNumber } from "@/utils"
+import { formatNumber, getHue } from "@/utils"
 import InvestmentDTO from "@/types/InvestmentDTO"
 import { useInvestmentContext } from "@/contexts/InvestmentContext"
 import { useEffect, useState } from "react"
+import { PieChart } from "react-minimal-pie-chart"
+import InvestmentSubType from "@/types/InvestmentSubType"
 
 
 export default function Table(
@@ -16,7 +18,7 @@ export default function Table(
     }
 ) {
     const { toggleSelected } = useInvestmentContext()
-    const [hiddenStates, setHiddenStates] = useState<{type: string; hidden: boolean}[]>([])
+    const [hiddenStates, setHiddenStates] = useState<{ type: string; hidden: boolean }[]>([])
     const types = [...(new Set(investments.map(inv => inv.type)))]
     const groups = types.map(type => ({
         type: type,
@@ -24,9 +26,14 @@ export default function Table(
             .filter(inv => inv.type === type)
             .sort((a, b) => b.invested - a.invested)
     }))
+    const chartData = groups.map(group => ({
+                title: group.type,
+                color: getHue(group.type as InvestmentSubType),
+                value: group.investments.reduce((prev, cur) => prev + (cur?.value ?? 0), 0)
+            }))
     useEffect(() => {
         if (hiddenStates.length === 0) setHiddenStates(types.map(type => ({ type: type, hidden: true })))
-    },[investments.map(inv => inv.id).join()])
+    }, [investments.map(inv => inv.id).join()])
 
     return <section style={{ margin: "1rem" }}>
         <h2>{selected ? "Selected" : "Unselected"}</h2>
@@ -49,33 +56,33 @@ export default function Table(
                     <th scope="col" style={{ whiteSpace: "nowrap" }}>Selection</th>
                 </tr>
             </thead>
-            { groups.map(group => (
-                    <tbody key={group.type}>
-                            <tr
-                                onClick={() => setHiddenStates(prev =>
-                                    prev.map(state =>
-                                        state.type === group.type
-                                            ? { ...state, hidden: !state.hidden }
-                                            : state
-                                    )
-                                )}
-                            >
-                                <th scope="rowgroup">{ group.type }</th>
-                                <td>{formatNumber(group.investments.reduce((prev, cur) => prev += cur.invested, 0))} €</td>
-                                <td>{formatNumber(group.investments.reduce((prev, cur) => prev += cur.value ?? 0, 0))} €</td>
-                                <td>{formatNumber(group.investments.reduce((prev, cur) => prev += cur.dividendsPerMonth ?? 0, 0))} €</td>
-                                <td>{formatNumber(group.investments.reduce((prev, cur) => prev += cur.latentCapitalGain ?? 0, 0))} €</td>
-                                <td></td>
-                            </tr>
-                        {group.investments.map(investement => (
-                            <InvestmentLine
-                                key={investement.id}
-                                investment={investement}
-                                hidden={hiddenStates.find(state => state.type === group.type)?.hidden ?? false}
-                            />
-                            ))}
-                    </tbody>
-                )) }
+            {groups.map(group => (
+                <tbody key={group.type}>
+                    <tr
+                        onClick={() => setHiddenStates(prev =>
+                            prev.map(state =>
+                                state.type === group.type
+                                    ? { ...state, hidden: !state.hidden }
+                                    : state
+                            )
+                        )}
+                    >
+                        <th scope="rowgroup">{group.type}</th>
+                        <td>{formatNumber(group.investments.reduce((prev, cur) => prev += cur.invested, 0))} €</td>
+                        <td>{formatNumber(group.investments.reduce((prev, cur) => prev += cur.value ?? 0, 0))} €</td>
+                        <td>{formatNumber(group.investments.reduce((prev, cur) => prev += cur.dividendsPerMonth ?? 0, 0))} €</td>
+                        <td>{formatNumber(group.investments.reduce((prev, cur) => prev += cur.latentCapitalGain ?? 0, 0))} €</td>
+                        <td></td>
+                    </tr>
+                    {group.investments.map(investement => (
+                        <InvestmentLine
+                            key={investement.id}
+                            investment={investement}
+                            hidden={hiddenStates.find(state => state.type === group.type)?.hidden ?? false}
+                        />
+                    ))}
+                </tbody>
+            ))}
             <tfoot>
                 <tr>
                     <th scope="row">Total</th>
@@ -87,7 +94,17 @@ export default function Table(
                 </tr>
             </tfoot>
         </table>
-        <div style={{ display: "flex", gap: "0.25rem", alignItems: "center" }}>
+        <PieChart
+            style={{ height: "18rem", margin: "2rem" }}
+            data={chartData}
+            animate={true}
+            radius={45}
+            label={({dataEntry}) => dataEntry.title}
+            labelStyle={{ fill: "white", fontSize: 7 }}
+            labelPosition={70}
+            segmentsShift={5}
+        />
+        <div>
             <div>{selected ? "Remove" : "Add"}</div>
             {groups.map(group => <InvestmentTag key={group.type} tag={group.type} onClick={() => toggleSelected(group.investments.map(inv => inv.id))} />)}
         </div>
