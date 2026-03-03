@@ -27,6 +27,11 @@ bun dev
 ## Environment variables
 - DB_PATH: string, optional, the path to your .sqlite file.
 
+## Migration generation
+```bash
+bun node_modules/typeorm/cli.js -- -d configurations/ormConfig.ts migration:generate migrations/<your-migration-name>
+```
+
 
 ## API endpoints
 ### GET /api/investment

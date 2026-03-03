@@ -1,10 +1,10 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Migration1769876177298 implements MigrationInterface {
-    name = 'Migration1769876177298'
+export class First1772544391023 implements MigrationInterface {
+    name = 'First1772544391023'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`CREATE TABLE "investment" ("id" varchar PRIMARY KEY NOT NULL, "type" varchar CHECK( "type" IN ('Scpi','Stock','NueProp','Livret') ) NOT NULL)`);
+        await queryRunner.query(`CREATE TABLE "investment" ("id" varchar PRIMARY KEY NOT NULL, "enableDividend" boolean, "type" varchar CHECK( "type" IN ('Scpi','Stock','Livret') ) NOT NULL)`);
         await queryRunner.query(`CREATE INDEX "IDX_94b4fc965122aff2fece6ddd17" ON "investment" ("type") `);
         await queryRunner.query(`CREATE TABLE "movement" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "date" datetime NOT NULL, "quantity" integer NOT NULL, "price" integer NOT NULL, "investmentId" varchar NOT NULL)`);
         await queryRunner.query(`CREATE TABLE "temporary_movement" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "date" datetime NOT NULL, "quantity" integer NOT NULL, "price" integer NOT NULL, "investmentId" varchar NOT NULL, CONSTRAINT "FK_830354962110377fe0a9c4ff562" FOREIGN KEY ("investmentId") REFERENCES "investment" ("id") ON DELETE CASCADE ON UPDATE NO ACTION)`);

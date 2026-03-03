@@ -8,8 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "migration:generate": "typeorm migration:generate -d configurations/ormConfig.ts",
-    "migration:run": "typeorm migration:run -d configurations/ormConfig.ts",
+    "migration:generate": "node_modules/typeorm/cli.js -- -d configurations/ormConfig.ts migration:generate",
+    "migration:run": "node_modules/typeorm/cli.js -- -d configurations/ormConfig.ts migration:run",
     "migration:revert": "set TS_NODE_PROJECT=tsconfig.typeorm.json&& ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:revert -d configurations/ormConfig.ts"
   },
   "dependencies": {
