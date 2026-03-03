@@ -6,6 +6,7 @@ interface InvestmentDTO {
     name?: string,
     value?: number,
     dividendsPerMonth?: number,
-    latentCapitalGain: number
+    latentCapitalGain?: number,
+    performance?: number,
 }
 export default InvestmentDTO

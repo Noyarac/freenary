@@ -12,7 +12,8 @@ export default {
         const investments = (await this.repository.findBy(whereClause)) as InvestmentInterface[]
 
         return Promise.all(investments.map(async investment => {
-            let name, value, dividendsPerMonth, latentCapitalGain
+            const invested = this._getInvestedOrQuantity("price", investment)
+            let name, value, dividendsPerMonth, latentCapitalGain, performance
             if (detailed) {
                 const quantity = this._getInvestedOrQuantity("quantity", investment)
                 const details = await investment.provider.find()
@@ -20,15 +21,17 @@ export default {
                 value = details.unitValue * quantity
                 dividendsPerMonth = details.unitYearlyDividends * quantity / 12
                 latentCapitalGain = details.unitLatentCapitalGain * quantity / 12
+                performance = (details.unitYearlyDividends + details.unitLatentCapitalGain) * quantity / invested
             }
             return {
                 id: investment.id,
                 type: investment.constructor.name,
-                invested: this._getInvestedOrQuantity("price", investment),
+                invested: invested,
                 name,
                 value,
                 dividendsPerMonth,
-                latentCapitalGain
+                latentCapitalGain,
+                performance
             } as InvestmentDTO
         }))
     },

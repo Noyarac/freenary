@@ -35,28 +35,32 @@ export default function Table(
         if (hiddenStates.length === 0) setHiddenStates(types.map(type => ({ type: type, hidden: true })))
     }, [investments.map(inv => inv.id).join()])
 
+    const invested = investments.reduce((prev, cur) => prev + cur.invested, 0)
+
     return <section style={{ margin: "1rem" }}>
         <h2>{selected ? "Selected" : "Unselected"}</h2>
         <table style={{ width: "100%", tableLayout: "fixed" }}>
             <colgroup>
                 <col span={1} />
                 <col span={1} style={{ width: "12ch" }} />
+                <col span={1} style={{ width: "24ch" }} />
+                <col span={1} style={{ width: "24ch" }} />
                 <col span={1} style={{ width: "12ch" }} />
-                <col span={1} style={{ width: "24ch" }} />
-                <col span={1} style={{ width: "24ch" }} />
                 <col span={1} style={{ width: "12ch" }} />
             </colgroup>
             <thead>
                 <tr>
                     <th scope="col">Name</th>
-                    <th scope="col" style={{ whiteSpace: "nowrap" }}>Invested</th>
                     <th scope="col" style={{ whiteSpace: "nowrap" }}>Value</th>
                     <th scope="col" style={{ whiteSpace: "nowrap" }}>Dividends per month</th>
                     <th scope="col" style={{ whiteSpace: "nowrap" }}>Capital gain per month</th>
+                    <th scope="col" style={{ whiteSpace: "nowrap" }}>Performance</th>
                     <th scope="col" style={{ whiteSpace: "nowrap" }}>Selection</th>
                 </tr>
             </thead>
-            {groups.map(group => (
+            {groups.map(group => {
+                const groupInvested = group.investments.reduce((prev, cur) => prev += cur.invested, 0)
+                return (
                 <tbody key={group.type}>
                     <tr
                         onClick={() => setHiddenStates(prev =>
@@ -68,10 +72,10 @@ export default function Table(
                         )}
                     >
                         <th scope="rowgroup">{group.type}</th>
-                        <td>{formatNumber(group.investments.reduce((prev, cur) => prev += cur.invested, 0))} €</td>
                         <td>{formatNumber(group.investments.reduce((prev, cur) => prev += cur.value ?? 0, 0))} €</td>
                         <td>{formatNumber(group.investments.reduce((prev, cur) => prev += cur.dividendsPerMonth ?? 0, 0))} €</td>
                         <td>{formatNumber(group.investments.reduce((prev, cur) => prev += cur.latentCapitalGain ?? 0, 0))} €</td>
+                        <td>{formatNumber(group.investments.reduce((prev, cur) => prev += (cur.performance ?? 0) * cur.invested, 0) / groupInvested * 100)} %</td>
                         <td></td>
                     </tr>
                     {group.investments.map(investement => (
@@ -82,14 +86,14 @@ export default function Table(
                         />
                     ))}
                 </tbody>
-            ))}
+            )})}
             <tfoot>
                 <tr>
                     <th scope="row">Total</th>
-                    <td>{formatNumber(investments.reduce((prev, cur) => prev += cur.invested, 0))} €</td>
                     <td>{formatNumber(investments.reduce((prev, cur) => prev += cur.value ?? 0, 0))} €</td>
                     <td>{formatNumber(investments.reduce((prev, cur) => prev += cur.dividendsPerMonth ?? 0, 0))} €</td>
                     <td>{formatNumber(investments.reduce((prev, cur) => prev += cur.latentCapitalGain ?? 0, 0))} €</td>
+                    <td>{formatNumber(investments.reduce((prev, cur) => prev += (cur.performance ?? 0) * cur.invested, 0) / invested * 100)} %</td>
                     <td></td>
                 </tr>
             </tfoot>
