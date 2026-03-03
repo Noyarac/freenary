@@ -19,7 +19,7 @@ export default {
                 name = details.name
                 value = details.unitValue * quantity
                 dividendsPerMonth = details.unitYearlyDividends * quantity / 12
-                latentCapitalGain = value * (1 - (1 / (1 + details.unitLatentCapitalGain))) / 12
+                latentCapitalGain = details.unitLatentCapitalGain * quantity / 12
             }
             return {
                 id: investment.id,
