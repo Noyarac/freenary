@@ -18,7 +18,7 @@ export default  function DetailsPage() {
         <dt>Current value</dt>
         <dd>{investment.value !== undefined ? (formatNumber(investment.value) + " €") : <Spinner />}</dd>
         <dt>Latent capital gain</dt>
-        <dd>{formatNumber(investment.latentCapitalGain) + " €"}</dd>
+        <dd>{formatNumber(investment.latentCapitalGain ?? 0) + " €"}</dd>
         <dt>Dividends per month</dt>
         <dd>{investment.dividendsPerMonth !== undefined ? (formatNumber(investment.dividendsPerMonth) + " €") : <Spinner />}</dd>
     </dl>
