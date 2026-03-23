@@ -6,6 +6,8 @@ import { createContext, ReactNode, useContext, useEffect, useState } from "react
 type InvestmentContextType = {
   investments: InvestmentDTO[]
   toggleSelected: (ids: string[]) => void
+  removeInvestment: (id: string) => void
+  addInvestment: (id: string) => void
 }
 const InvestmentContext = createContext<InvestmentContextType | undefined>(undefined)
 
@@ -43,8 +45,23 @@ export function InvestmentContextProvider({ children }: { children: ReactNode })
     )
   }
 
+  const removeInvestment = (id: string) => {
+    setInvestments(prev =>
+      prev.filter(inv => inv.id !== id)
+    )
+  }
+
+  const addInvestment = async (id: string) => {
+    const invRes = await fetch(`/api/investment/?detailed=true&ids=${id}`)
+    const invJson = (await invRes.json()).pop()
+    invJson.selected = true
+    setInvestments(prev =>
+      [...prev, invJson]
+    )
+  }
+
   return (
-    <InvestmentContext.Provider value={{ investments, toggleSelected }}>
+    <InvestmentContext.Provider value={{ investments, toggleSelected, removeInvestment, addInvestment }}>
       {children}
     </InvestmentContext.Provider>
   )

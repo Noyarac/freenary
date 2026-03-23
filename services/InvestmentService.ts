@@ -48,6 +48,10 @@ export default {
         return investment
     },
 
+    async deleteInvestments(ids: string[]) {
+        this.repository.delete(ids)
+    },
+
     _getInvestedOrQuantity(mode: "price" | "quantity", investment: Investment) {
         return investment.movements
             .map(investment => investment[mode])

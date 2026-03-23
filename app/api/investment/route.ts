@@ -7,15 +7,14 @@ import z from "zod"
 export async function GET(req: NextRequest) {
     const ids = await sanitizeIds(req)
     const { detailed } = await sanitize(req, "query", { detailed: z.coerce.boolean().optional() })
-    const responseObject = await InvestmentService.getInvestments({ ids, detailed})
+    const responseObject = await InvestmentService.getInvestments({ ids, detailed })
     return NextResponse.json(responseObject)
 }
 
 export async function POST(req: NextRequest) {
-    let id = ""
-    let type: InvestmentSubTypeName = "Livret"
+    let sanitized
     try {
-        const { id, type } = await sanitize(req, "form", {
+        sanitized = await sanitize(req, "form", {
             id: singleIdSchema,
             type: z.enum(Object.values(InvestmentSubType))
         })
@@ -25,6 +24,7 @@ export async function POST(req: NextRequest) {
     }
     let responseObject
     let status
+    const { id, type } = sanitized
     try {
         responseObject = await InvestmentService.saveInvestment(id, type)
         status = { status: 200 }
@@ -33,4 +33,20 @@ export async function POST(req: NextRequest) {
         status = { status: 500 }
     }
     return NextResponse.json(responseObject, status)
+}
+
+export async function DELETE(req: NextRequest) {
+    let ids
+    try {
+        ids = await sanitizeIds(req, "body")
+        if (ids === undefined) throw new Error()
+    } catch (error) {
+        return NextResponse.json(error, { status: 400 })
+    }
+    try {
+        await InvestmentService.deleteInvestments(ids)
+    } catch (error) {
+        return NextResponse.json(error, { status: 500 })
+    }
+    return NextResponse.json({success: true})
 }

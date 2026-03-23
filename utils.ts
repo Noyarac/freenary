@@ -22,11 +22,12 @@ export async function sanitize<T extends z.ZodRawShape>(
   shape: T
 ) {
   const schema = z.object(shape)
-
   let toParse
   switch(mode) {
     case "body":
+      // console.debug("Enters body", req)
       toParse = await req.json()
+      console.debug("to parse", toParse)
       break
     case "form":
       toParse = Object.fromEntries((await req.formData()).entries())
@@ -39,7 +40,7 @@ export async function sanitize<T extends z.ZodRawShape>(
   return schema.parse(toParse) as z.infer<z.ZodObject<T>>
 }
 
-export const singleIdSchema = z.string().regex(appConfig.investmentIdRegex, "Investment id bad format.")
+export const singleIdSchema = z.string().regex(appConfig.investmentIdRegex, "Investment ID bad format.")
 
 export async function sanitizeIds(req: NextRequest, mode: "query" | "body" | "form" = "query") {
   const querySchema = {
