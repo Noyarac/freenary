@@ -37,14 +37,18 @@ export default function SavePage() {
     }
     return <>
         <h2>{investment === undefined ? "Add a new investment" : "Update an investment"}</h2>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} id="save">
             <label htmlFor="type">Type</label>
             <select id="type" name="type" required>
-                {Object.values(InvestmentSubType).map(subtype => <option key={subtype} value={subtype}>{subtype}</option>)}
+                {Object.values(InvestmentSubType).map(subtype => <option key={subtype} value={subtype} selected={investment?.type == subtype}>{subtype}</option>)}
             </select>
         <label htmlFor="id">Id</label>
-        <input type="text" id="id" name="id" required />
-        <div><button>Submit</button></div>
+        <input type="text" id="id" name="id" defaultValue={investment?.id} required={investment === undefined} disabled={investment !== undefined} />
         </form>
+        <div>
+            <button form="save">Submit</button>
+            <button className="danger">Delete</button>
+        </div>
+        
     </>
 }

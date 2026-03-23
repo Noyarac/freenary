@@ -3,6 +3,7 @@
 import Spinner from "@/components/Spinner";
 import { useInvestmentContext } from "@/contexts/InvestmentContext";
 import { formatNumber } from "@/utils";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
 export default  function DetailsPage() {
@@ -12,6 +13,7 @@ export default  function DetailsPage() {
     const investment = investments.find(inv => inv.id === id)
     return investment === undefined ? "Loading" : <>
     <h2>{investment.name ?? <Spinner />}</h2>
+    <Link href={`/save?id=${investment.id}`}>Edit</Link>
     <dl>
         <dt>Invested</dt>
         <dd>{formatNumber(investment.invested) + " €"}</dd>
