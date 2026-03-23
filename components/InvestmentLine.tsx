@@ -8,7 +8,7 @@ export default function InvestmentLine({ investment, hidden = false }: { investm
     const { toggleSelected } = useInvestmentContext()
     return (
         <tr hidden={hidden}>
-            <th>{ investment.name ? <Link href={`/details/?id=${investment.id}`} >{investment.name}</Link> : <Spinner /> }</th>
+            <th><Link href={`/details/?id=${investment.id}`} >{ investment.name ? investment.name : investment.id }</Link></th>
             <td>{investment.value !== undefined ? (formatNumber(investment.value) + " €") : <Spinner />}</td>
             <td>{investment.dividendsPerMonth !== undefined ? (formatNumber(investment.dividendsPerMonth) + " €") : <Spinner />}</td>
             <td>{investment.latentCapitalGain !== undefined ? (formatNumber(investment.latentCapitalGain) + " €") : <Spinner />}</td>

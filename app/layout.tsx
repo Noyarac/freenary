@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { InvestmentContextProvider } from "@/contexts/InvestmentContext";
 import Link from "next/link";
+import { ToastContextProvider } from "@/contexts/ToastContext";
 
 export const metadata: Metadata = {
   title: "Freenary",
@@ -13,6 +14,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <html lang="en">
       <body>
@@ -24,12 +26,15 @@ export default function RootLayout({
         <nav>
           <ul>
             <li><Link href="/">Dashboard</Link></li>
+            <li><Link href="/save">Add an investment</Link></li>
           </ul>
         </nav>
         <main>
-        <InvestmentContextProvider>
-          {children}
-        </InvestmentContextProvider>
+          <InvestmentContextProvider>
+            <ToastContextProvider>
+              {children}
+            </ToastContextProvider>
+          </InvestmentContextProvider>
         </main>
         <script src="https://noyarac.github.io/cclf/cclf.js"></script>
       </body>

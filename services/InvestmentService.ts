@@ -3,6 +3,10 @@ import Investment from "@/entities/Investment"
 import InvestmentDTO from "@/types/InvestmentDTO"
 import InvestmentInterface from "@/types/Investment"
 import { In } from "typeorm"
+import { InvestmentSubTypeName } from "@/types/InvestmentSubType"
+import Scpi from "@/entities/Scpi"
+import Stock from "@/entities/Stock"
+import Livret from "@/entities/Livret"
 
 export default {
     repository: await getRepository(Investment),
@@ -36,9 +40,27 @@ export default {
         }))
     },
 
+    async saveInvestment(id: string, type: InvestmentSubTypeName) {
+        const existingInvestment = await this.repository.findOneBy({ id })
+        const investment = existingInvestment ?? this._createInvestment(type)
+        investment.id = id
+        await this.repository.save(investment)
+        return investment
+    },
+
     _getInvestedOrQuantity(mode: "price" | "quantity", investment: Investment) {
         return investment.movements
             .map(investment => investment[mode])
             .reduce((previous, current) => previous + current, 0)
     },
+
+    _createInvestment(type?: InvestmentSubTypeName) {
+    switch(type) {
+        case "Scpi": return new Scpi()
+        case "Stock": return new Stock()
+        case "Livret": return new Livret()
+        default: return new Investment()
+    }
+}
+
 }

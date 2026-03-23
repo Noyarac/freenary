@@ -18,24 +18,30 @@ export function getHue(type: InvestmentSubType, s = 40, l = 30) {
 
 export async function sanitize<T extends z.ZodRawShape>(
   req: NextRequest,
-  mode: "query" | "body",
+  mode: "query" | "body" | "form",
   shape: T
 ) {
   const schema = z.object(shape)
 
   let toParse
-  if (mode === "body") {
-    toParse = await req.json()
-  } else {
-    const { searchParams } = new URL(req.url)
-    toParse = Object.fromEntries(searchParams.entries())
+  switch(mode) {
+    case "body":
+      toParse = await req.json()
+      break
+    case "form":
+      toParse = Object.fromEntries((await req.formData()).entries())
+      break
+    default:
+      const { searchParams } = new URL(req.url)
+      toParse = Object.fromEntries(searchParams.entries())
   }
 
   return schema.parse(toParse) as z.infer<z.ZodObject<T>>
 }
 
-export async function sanitizeIds(req: NextRequest) {
-  const singleIdSchema = z.string().regex(appConfig.investmentIdRegex, "Investment id bad format.")
+export const singleIdSchema = z.string().regex(appConfig.investmentIdRegex, "Investment id bad format.")
+
+export async function sanitizeIds(req: NextRequest, mode: "query" | "body" | "form" = "query") {
   const querySchema = {
     ids: z.preprocess(
       val => {
@@ -46,7 +52,7 @@ export async function sanitizeIds(req: NextRequest) {
         .optional()
     )
   }
-  const { ids } = await sanitize(req, "query", querySchema)
+  const { ids } = await sanitize(req, mode, querySchema)
   return ids
 }
 
