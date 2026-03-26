@@ -25,9 +25,7 @@ export async function sanitize<T extends z.ZodRawShape>(
   let toParse
   switch(mode) {
     case "body":
-      // console.debug("Enters body", req)
       toParse = await req.json()
-      console.debug("to parse", toParse)
       break
     case "form":
       toParse = Object.fromEntries((await req.formData()).entries())
@@ -36,7 +34,6 @@ export async function sanitize<T extends z.ZodRawShape>(
       const { searchParams } = new URL(req.url)
       toParse = Object.fromEntries(searchParams.entries())
   }
-
   return schema.parse(toParse) as z.infer<z.ZodObject<T>>
 }
 

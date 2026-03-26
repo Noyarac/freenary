@@ -1,5 +1,5 @@
 import InvestmentService from "@/services/InvestmentService"
-import InvestmentSubType, { InvestmentSubTypeName } from "@/types/InvestmentSubType"
+import InvestmentSubType from "@/types/InvestmentSubType"
 import { sanitize, sanitizeIds, singleIdSchema } from "@/utils"
 import { NextRequest, NextResponse } from "next/server"
 import z from "zod"

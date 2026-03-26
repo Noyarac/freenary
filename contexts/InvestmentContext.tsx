@@ -1,6 +1,7 @@
 "use client"
 
 import InvestmentDTO from "@/types/InvestmentDTO"
+import MovementDTO from "@/types/MovementDTO"
 import { createContext, ReactNode, useContext, useEffect, useState } from "react"
 
 type InvestmentContextType = {
@@ -8,6 +9,8 @@ type InvestmentContextType = {
   toggleSelected: (ids: string[]) => void
   removeInvestment: (id: string) => void
   addInvestment: (id: string) => void
+  removeMovement: (investmentId: string, movementId: number) => void
+  addMovement: (movement: MovementDTO) => void
 }
 const InvestmentContext = createContext<InvestmentContextType | undefined>(undefined)
 
@@ -18,7 +21,7 @@ export function InvestmentContextProvider({ children }: { children: ReactNode })
     const updateInvestmentBasic = async () => {
       const responseBasicAll = await fetch("/api/investment/")
       const investmentsBasicAll = ((await responseBasicAll.json()) as InvestmentDTO[])
-        .map(inv => ({ ...inv, selected: true }))
+        .map(inv => ({ ...inv, selected: true, movements: inv.movements.map(mov => {mov.date = typeof mov.date === "string" ? new Date(mov.date as unknown as string) : mov.date; return mov}) }))
       setInvestments(investmentsBasicAll)
       return investmentsBasicAll
     }
@@ -27,7 +30,7 @@ export function InvestmentContextProvider({ children }: { children: ReactNode })
       const invRes = await fetch(`/api/investment/?detailed=true&ids=${investment.id}`)
       const invJson = (await invRes.json()).pop()
       setInvestments(prev =>
-        prev.map(inv => (inv.id === invJson.id ? { ...inv, ...invJson } : inv))
+        prev.map(inv => (inv.id === invJson.id ? { ...inv, ...invJson, movements: inv.movements } : inv))
       )
     }
 
@@ -51,6 +54,24 @@ export function InvestmentContextProvider({ children }: { children: ReactNode })
     )
   }
 
+  const removeMovement = (investementId: string, movementId: number) => {
+    setInvestments(prev =>
+      prev.map(inv => {
+        if (inv.id === investementId) inv.movements = inv.movements.filter(mov => mov.id !== movementId)
+        return inv
+      })
+    )
+  }
+
+  const addMovement = (movement: MovementDTO) => {
+    setInvestments(prev =>
+      prev.map(inv => {
+        if (inv.id === movement.investmentId) inv.movements.push(movement)
+        return inv
+      })
+    )
+  }
+
   const addInvestment = async (id: string) => {
     const invRes = await fetch(`/api/investment/?detailed=true&ids=${id}`)
     const invJson = (await invRes.json()).pop()
@@ -61,7 +82,7 @@ export function InvestmentContextProvider({ children }: { children: ReactNode })
   }
 
   return (
-    <InvestmentContext.Provider value={{ investments, toggleSelected, removeInvestment, addInvestment }}>
+    <InvestmentContext.Provider value={{ investments, toggleSelected, removeInvestment, addInvestment, removeMovement, addMovement }}>
       {children}
     </InvestmentContext.Provider>
   )

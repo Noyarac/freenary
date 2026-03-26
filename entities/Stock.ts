@@ -4,7 +4,7 @@ import InvestmentInterface from "@/types/Investment"
 import InvestmentProvider from "@/types/InvestmentProvider"
 import StockProviderWrapper from "@/prodivers/StockProvider"
 
-@ChildEntity()
+@ChildEntity("Stock")
 export default class Stock extends Investment implements InvestmentInterface {
     get provider(): InvestmentProvider { return StockProviderWrapper(this) }
 }

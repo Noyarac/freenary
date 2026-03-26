@@ -35,7 +35,8 @@ export default {
                 value,
                 dividendsPerMonth,
                 latentCapitalGain,
-                performance
+                performance,
+                movements: investment.movements.map(entity => ({...entity, investmentId: entity.investment?.id, investment: undefined}))
             } as InvestmentDTO
         }))
     },

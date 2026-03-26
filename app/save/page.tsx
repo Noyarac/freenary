@@ -4,9 +4,13 @@ import { useInvestmentContext } from "@/contexts/InvestmentContext";
 import { useToastContext } from "@/contexts/ToastContext";
 import InvestmentSubType from "@/types/InvestmentSubType";
 import { useSearchParams } from "next/navigation";
-import React from "react";
+import React, { Suspense } from "react";
 
 export default function SavePage() {
+    return <Suspense fallback="Loading"><SaveContent /></Suspense>
+}
+
+function SaveContent() {
     const params = useSearchParams()
     const id = params.get("id")
     const { investments, removeInvestment, addInvestment } = useInvestmentContext()

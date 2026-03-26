@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
     "migration:generate": "node_modules/typeorm/cli.js -- -d configurations/ormConfig.ts migration:generate",
