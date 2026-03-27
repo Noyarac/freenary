@@ -63,6 +63,7 @@ export default function Table(
                 return (
                 <tbody key={group.type}>
                     <tr
+                        style={{cursor: "pointer"}}
                         onClick={() => setHiddenStates(prev =>
                             prev.map(state =>
                                 state.type === group.type

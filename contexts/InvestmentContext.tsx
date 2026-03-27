@@ -17,23 +17,23 @@ const InvestmentContext = createContext<InvestmentContextType | undefined>(undef
 export function InvestmentContextProvider({ children }: { children: ReactNode }) {
   const [investments, setInvestments] = useState<InvestmentDTO[]>([])
 
+  const updateInvestmentBasic = async () => {
+    const responseBasicAll = await fetch("/api/investment/")
+    const investmentsBasicAll = ((await responseBasicAll.json()) as InvestmentDTO[])
+      .map(inv => ({ ...inv, selected: true, movements: inv.movements.map(mov => {mov.date = typeof mov.date === "string" ? new Date(mov.date as unknown as string) : mov.date; return mov}) }))
+    setInvestments(investmentsBasicAll)
+    return investmentsBasicAll
+  }
+
+  const updateInvestmentDetailed = async (investment: InvestmentDTO) => {
+    const invRes = await fetch(`/api/investment/?detailed=true&ids=${investment.id}`)
+    const invJson = (await invRes.json()).pop()
+    setInvestments(prev =>
+      prev.map(inv => (inv.id === invJson.id ? { ...inv, ...invJson, movements: inv.movements } : inv))
+    )
+  }
+
   useEffect(() => {
-    const updateInvestmentBasic = async () => {
-      const responseBasicAll = await fetch("/api/investment/")
-      const investmentsBasicAll = ((await responseBasicAll.json()) as InvestmentDTO[])
-        .map(inv => ({ ...inv, selected: true, movements: inv.movements.map(mov => {mov.date = typeof mov.date === "string" ? new Date(mov.date as unknown as string) : mov.date; return mov}) }))
-      setInvestments(investmentsBasicAll)
-      return investmentsBasicAll
-    }
-
-    const updateInvestmentDetailed = async (investment: InvestmentDTO) => {
-      const invRes = await fetch(`/api/investment/?detailed=true&ids=${investment.id}`)
-      const invJson = (await invRes.json()).pop()
-      setInvestments(prev =>
-        prev.map(inv => (inv.id === invJson.id ? { ...inv, ...invJson, movements: inv.movements } : inv))
-      )
-    }
-
     updateInvestmentBasic().then(basic => {
       basic.map(updateInvestmentDetailed)
     })
@@ -57,7 +57,10 @@ export function InvestmentContextProvider({ children }: { children: ReactNode })
   const removeMovement = (investementId: string, movementId: number) => {
     setInvestments(prev =>
       prev.map(inv => {
-        if (inv.id === investementId) inv.movements = inv.movements.filter(mov => mov.id !== movementId)
+        if (inv.id === investementId) {
+          inv.movements = inv.movements.filter(mov => mov.id !== movementId)
+          updateInvestmentDetailed({id: investementId} as InvestmentDTO)
+        }
         return inv
       })
     )
@@ -66,7 +69,7 @@ export function InvestmentContextProvider({ children }: { children: ReactNode })
   const addMovement = (movement: MovementDTO) => {
     setInvestments(prev =>
       prev.map(inv => {
-        if (inv.id === movement.investmentId) inv.movements.push(movement)
+        if (inv.id === movement.investmentId) inv.movements.push(movement) && updateInvestmentDetailed({id: movement.investmentId} as InvestmentDTO)
         return inv
       })
     )

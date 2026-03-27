@@ -57,6 +57,7 @@ function DetailsContent() {
             if (res.ok) {
                 setToast({ message: "Movement saved!", level: "success" })
                 addMovement(movement)
+                form.reset()
             } else if ((movement as any).name === "ZodError") {
                 const details = JSON.parse((movement as any).message)
                 setToast({ message: `Error: ${details[0].message}`, level: "error" })

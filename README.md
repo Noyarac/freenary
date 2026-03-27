@@ -15,13 +15,19 @@ bun i
 Run the migrations:
 
 ```bash
-bun migration:run
+bun run migration:run
 ```
 
-Run the development server:
+Run the development server ...
 
 ```bash
-bun dev
+bun run dev
+```
+
+... or build the project and start it:
+```bash
+bun run build
+bun run start
 ```
 
 ## Environment variables
@@ -29,13 +35,5 @@ bun dev
 
 ## Migration generation
 ```bash
-bun node_modules/typeorm/cli.js -- -d configurations/ormConfig.ts migration:generate migrations/<your-migration-name>
+bun run migration:generate
 ```
-
-
-## API endpoints
-### GET /api/investment
-    - Parameters
-        - id: optionnal, one or more ids (comma separated). If none are provided, returns all.
-        - mode: optionnal, either `"basic"` or `"details"`. Default: `"basic"`
-    - Returns a list of investmentDTO
