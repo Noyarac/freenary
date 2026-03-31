@@ -80,6 +80,12 @@ function DetailsContent() {
             <dd>{formatNumber(investment.latentCapitalGain ?? 0) + " €"}</dd>
             <dt>Dividends per month</dt>
             <dd>{investment.dividendsPerMonth !== undefined ? (formatNumber(investment.dividendsPerMonth) + " €") : <Spinner />}</dd>
+            {investment.type === "Stock" ? <>
+                <dt>Expected performance</dt>
+                <dd>{investment.expectedPerformance !== undefined ? (formatNumber(investment.expectedPerformance * 100) + " %") : <Spinner />}</dd> </> : ""
+            }
+            <dt>Performance</dt>
+            <dd>{investment.performance !== undefined ? (formatNumber(investment.performance * 100) + " %") : <Spinner />}</dd>
         </dl>
         <form onSubmit={handleCreate} id="createMovement"></form>
         <table>

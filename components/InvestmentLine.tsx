@@ -12,7 +12,7 @@ export default function InvestmentLine({ investment, hidden = false }: { investm
             <td>{investment.value !== undefined ? (formatNumber(investment.value) + " €") : <Spinner />}</td>
             <td>{investment.dividendsPerMonth !== undefined ? (formatNumber(investment.dividendsPerMonth) + " €") : <Spinner />}</td>
             <td>{investment.latentCapitalGain !== undefined ? (formatNumber(investment.latentCapitalGain) + " €") : <Spinner />}</td>
-            <td>{investment.performance !== undefined ? (formatNumber(investment.performance * 100) + " %") : <Spinner />}</td>
+            <td>{investment.performance !== undefined ? <span className={investment.type === "Stock" ? investment.performance < (investment?.expectedPerformance ?? 0) ? "danger" : "success" : ""}>{formatNumber(investment.performance * 100) + " %"}</span> : <Spinner />}</td>
             <td><button className="secondary" onClick={() => toggleSelected([investment.id])} >Move</button></td>
         </tr>
     )

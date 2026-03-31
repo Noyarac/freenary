@@ -11,5 +11,6 @@ interface InvestmentDTO {
     dividendsPerMonth?: number
     latentCapitalGain?: number
     performance?: number
+    expectedPerformance?: number
 }
 export default InvestmentDTO
