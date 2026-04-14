@@ -5,5 +5,6 @@ export default interface InvestmentProvider {
         unitYearlyDividends: number,
         name: string,
         unitLatentCapitalGain: number,
+        expectedPerformance?: number
     }>
 }

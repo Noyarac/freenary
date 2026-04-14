@@ -17,7 +17,7 @@ export default {
 
         return Promise.all(investments.map(async investment => {
             const invested = this._getInvestedOrQuantity("price", investment)
-            let name, value, dividendsPerMonth, latentCapitalGain, performance
+            let name, value, dividendsPerMonth, latentCapitalGain, performance, expectedPerformance
             if (detailed) {
                 const quantity = this._getInvestedOrQuantity("quantity", investment)
                 const details = await investment.provider.find()
@@ -26,6 +26,7 @@ export default {
                 dividendsPerMonth = details.unitYearlyDividends * quantity / 12
                 latentCapitalGain = details.unitLatentCapitalGain * quantity / 12
                 performance = (details.unitYearlyDividends + details.unitLatentCapitalGain) * quantity / invested
+                expectedPerformance = details.expectedPerformance
             }
             return {
                 id: investment.id,
@@ -36,6 +37,7 @@ export default {
                 dividendsPerMonth,
                 latentCapitalGain,
                 performance,
+                expectedPerformance,
                 movements: investment.movements.map(entity => ({...entity, investmentId: entity.investment?.id, investment: undefined}))
             } as InvestmentDTO
         }))
