@@ -42,11 +42,11 @@ export default function Table(
         <table style={{ width: "100%", tableLayout: "fixed" }}>
             <colgroup>
                 <col span={1} />
-                <col span={1} style={{ width: "12ch" }} />
-                <col span={1} style={{ width: "24ch" }} />
-                <col span={1} style={{ width: "24ch" }} />
-                <col span={1} style={{ width: "12ch" }} />
-                <col span={1} style={{ width: "12ch" }} />
+                <col span={1} />
+                <col span={1} />
+                <col span={1} />
+                <col span={1} />
+                <col span={1} />
             </colgroup>
             <thead>
                 <tr>
