@@ -86,6 +86,10 @@ function DetailsContent() {
             }
             <dt>Performance</dt>
             <dd>{investment.performance !== undefined ? (formatNumber(investment.performance * 100) + " %") : <Spinner />}</dd>
+            {investment.type !== "Stock" ? "" : <>
+            <dt>Yahoo! page</dt>
+            <dd><a href={`https://finance.yahoo.com/quote/${investment.id}/chart`} target="_blank">View</a></dd>
+            </>}
         </dl>
         <form onSubmit={handleCreate} id="createMovement"></form>
         <table>
