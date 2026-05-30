@@ -31,6 +31,7 @@ export default {
             return {
                 id: investment.id,
                 type: investment.constructor.name,
+                enableDividend: investment.enableDividend,
                 invested: invested,
                 name,
                 value,
@@ -43,10 +44,11 @@ export default {
         }))
     },
 
-    async saveInvestment(id: string, type: InvestmentSubTypeName) {
+    async saveInvestment(id: string, type: InvestmentSubTypeName, enableDividend: boolean) {
         const existingInvestment = await this.repository.findOneBy({ id })
         const investment = existingInvestment ?? this._createInvestment(type)
         investment.id = id
+        investment.enableDividend = enableDividend
         await this.repository.save(investment)
         return investment
     },

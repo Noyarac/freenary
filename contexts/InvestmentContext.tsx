@@ -8,7 +8,7 @@ type InvestmentContextType = {
   investments: InvestmentDTO[]
   toggleSelected: (ids: string[]) => void
   removeInvestment: (id: string) => void
-  addInvestment: (id: string) => void
+  addInvestment: (id: string) => Promise<void>
   removeMovement: (investmentId: string, movementId: number) => void
   addMovement: (movement: MovementDTO) => void
 }
@@ -78,9 +78,11 @@ export function InvestmentContextProvider({ children }: { children: ReactNode })
   const addInvestment = async (id: string) => {
     const invRes = await fetch(`/api/investment/?detailed=true&ids=${id}`)
     const invJson = (await invRes.json()).pop()
-    invJson.selected = true
+    invJson.movements = invJson.movements.map((mov: any) => { mov.date = typeof mov.date === "string" ? new Date(mov.date) : mov.date; return mov})
+    const existingInvestement = investments.find(investment => investment.id === id)
+    invJson.selected = existingInvestement ? existingInvestement.selected : true
     setInvestments(prev =>
-      [...prev, invJson]
+      [...(prev.filter(inv => inv.id !== id)), invJson]
     )
   }
 
