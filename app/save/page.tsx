@@ -18,6 +18,7 @@ function SaveContent() {
     const investment = investments.find(inv => inv.id === id)
     const { setToast } = useToastContext()
     const [selectedOption, setSelectedOption] = useState<string>(investment?.type ?? "Scpi")
+    const [enableDividend, setEnableDividend] = useState(investment?.enableDividend)
     const router = useRouter()
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -32,7 +33,7 @@ function SaveContent() {
             const json = await res.json()
             if (res.ok) {
                 setToast({ message: "Investment saved!", level: "success" })
-                addInvestment(data.get("id")?.toString()!)
+                await addInvestment(data.get("id")?.toString()!)
                 router.push(`/details?id=${json.id}`)
             } else if (json.name === "ZodError") {
                 const details = JSON.parse(json.message)
@@ -80,9 +81,13 @@ function SaveContent() {
                 >{subtype}</option>)}
             </select>
             <label htmlFor="id">Id</label>
-            {["Scpi", "Stock"].includes(selectedOption) && <input type="text" name="id" value={investment?.id} required={investment === undefined} disabled={investment !== undefined} />}
+            {["Scpi", "Stock"].includes(selectedOption) && <> {investment !== undefined && <input type="hidden" name="id" value={investment.id} />} <input type="text" name="id" value={investment?.id} required={investment === undefined} disabled={investment !== undefined} /></> }
             { selectedOption === "Scpi" && <p>Use the id from <code>www.scpi-lab.com</code>. For example, for <code>https://www.scpi-lab.com/scpi/scpi-pierval-sante-93/</code> or <code>https://www.scpi-lab.com/scpi.php?vue=&produit_id=93</code>, use <code>93</code>.</p> }
             { selectedOption === "Stock" && <p>Use the id from <code>finance.yahoo.com</code>. For example, for <code>https://fr.finance.yahoo.com/quote/AI.PA/</code>, use <code>AI.PA</code>.</p> }
+            { selectedOption === "Scpi" && <>
+            <label htmlFor="enableDividend">Enable dividend</label>
+            <input id="enableDividend" type="checkbox" value="1" name="enableDividend" checked={enableDividend} onChange={() => { setEnableDividend(!enableDividend) }} />
+            </> }
             {selectedOption === "Livret" &&
             <select name="id">
                 <option value="Livret A">Livret A</option>

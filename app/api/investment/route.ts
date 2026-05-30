@@ -16,7 +16,8 @@ export async function POST(req: NextRequest) {
     try {
         sanitized = await sanitize(req, "form", {
             id: singleIdSchema,
-            type: z.enum(Object.values(InvestmentSubType))
+            type: z.enum(Object.values(InvestmentSubType)),
+            enableDividend: z.preprocess(raw => raw === "1" ? true : false, z.boolean())
         })
 
     } catch (error) {
@@ -24,9 +25,9 @@ export async function POST(req: NextRequest) {
     }
     let responseObject
     let status
-    const { id, type } = sanitized
+    const { id, type, enableDividend } = sanitized
     try {
-        responseObject = await InvestmentService.saveInvestment(id, type)
+        responseObject = await InvestmentService.saveInvestment(id, type, enableDividend)
         status = { status: 200 }
     } catch (error) {
         responseObject = { error }

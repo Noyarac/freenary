@@ -8,6 +8,7 @@ interface InvestmentDTO {
     selected?: boolean
     name?: string
     value?: number
+    enableDividend?: boolean
     dividendsPerMonth?: number
     latentCapitalGain?: number
     performance?: number
