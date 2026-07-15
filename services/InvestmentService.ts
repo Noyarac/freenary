@@ -7,8 +7,6 @@ import { InvestmentSubTypeName } from "@/types/InvestmentSubType"
 import Scpi from "@/entities/Scpi"
 import Stock from "@/entities/Stock"
 import Livret from "@/entities/Livret"
-import Split from "@/entities/Split"
-import SplitDTO from "@/types/SplitDTO"
 
 export default {
     repository: await getRepository(Investment),

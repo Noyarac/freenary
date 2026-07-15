@@ -10,7 +10,11 @@ const StockProviderWrapper = (stock: Stock) => {
             const data = rawData.chart.result[0]
             const name = data.meta.shortName
             const unitValue = data.meta.regularMarketPrice
-            const closeValues = (data.indicators.quote[0].close.filter( (val: any) => val !== undefined && val !== null)) as number[]
+            let closeValues = data.indicators.quote[0].close as number[]
+            const timestamps = data.timestamp.map((ts: number) => new Date(ts * 1000))
+            if (closeValues.length !== timestamps.length) throw new Error(`When scraping ${stock.id}, timestamps length didn't match closeValues length.`)
+            
+            closeValues = closeValues.map((val, index) => val / stock.splits.reduce((prev, cur) => (new Date(timestamps[index]).getTime() > cur.date.getTime() - Constants.MILLISECONDS_IN_DAY * 4 ? prev : {ratio: prev.ratio * cur.ratio}), { ratio: 1 }).ratio)
             const todayStock = (closeValues.at(-1) ?? 0)
             const averagedOneYearAgoStock = closeValues.slice(Math.max(0, closeValues.length - 1 - Constants.WEEKS_IN_YEAR * 2)).reduce((prev, cur) => prev + cur, 0) / (Math.min(closeValues.length, Constants.WEEKS_IN_YEAR * 2))
             const unitLatentCapitalGain = todayStock - averagedOneYearAgoStock
