@@ -8,6 +8,7 @@ import { formatNumber } from "@/utils";
 import Link from "next/link";
 import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
+import SplitDTO from "@/types/SplitDTO";
 
 export default function DetailsPage() {
     return <Suspense fallback="Loading"><DetailsContent /></Suspense>
@@ -16,7 +17,7 @@ export default function DetailsPage() {
 function DetailsContent() {
     const params = useSearchParams()
     const id = params.get("id")
-    const { investments, removeMovement, addMovement } = useInvestmentContext()
+    const { investments, removeMovement, addMovement, addSplit, removeSplit } = useInvestmentContext()
     const investment = investments.find(inv => inv.id === id)
     const { setToast } = useToastContext()
 
@@ -32,6 +33,28 @@ function DetailsContent() {
             if (res.ok) {
                 setToast({ message: "Movement deleted!", level: "success" })
                 removeMovement(investment!.id, id)
+            } else if (json.name === "ZodError") {
+                const details = JSON.parse(json.message)
+                setToast({ message: `Error: ${details[0].message}`, level: "error" })
+            }
+        } catch (err) {
+            setToast({ message: "Something went wrong.", level: "error" })
+            console.debug(err)
+        }
+    }
+
+    const handleDeleteSplit = async (id: number) => {
+        if (!confirm("Are you sure? This can't be undone.")) return;
+        try {
+            const res = await fetch("/api/split", {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id })
+            })
+            const json = await res.json()
+            if (res.ok) {
+                setToast({ message: "Split deleted!", level: "success" })
+                removeSplit(investment!.id, id)
             } else if (json.name === "ZodError") {
                 const details = JSON.parse(json.message)
                 setToast({ message: `Error: ${details[0].message}`, level: "error" })
@@ -67,7 +90,31 @@ function DetailsContent() {
             console.debug(err)
         }
     }
-
+    const handleCreateSplit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        const form = e.currentTarget
+        const data = new FormData(form)
+        data.set("investmentId", investment!.id)
+        try {
+            const res = await fetch("/api/split", {
+                method: "POST",
+                body: data
+            })
+            const split = await res.json() as SplitDTO
+            split.date = new Date(split.date)
+            if (res.ok) {
+                setToast({ message: "Split saved!", level: "success" })
+                addSplit(split)
+                form.reset()
+            } else if ((split as any).name === "ZodError") {
+                const details = JSON.parse((split as any).message)
+                setToast({ message: `Error: ${details[0].message}`, level: "error" })
+            }
+        } catch (err) {
+            setToast({ message: "Something went wrong.", level: "error" })
+            console.debug(err)
+        }
+    }
     return investment === undefined ? "Loading" : <>
         <h2>{investment.name ?? <Spinner />}</h2>
         <Link href={`/save?id=${investment.id}`}>Edit</Link>
@@ -115,6 +162,31 @@ function DetailsContent() {
                         <td>{movement.quantity}</td>
                         <td>{formatNumber(movement.price) + " €"}</td>
                         <td><button className="delete" onClick={() => handleDelete(movement.id)}></button></td>
+                    </tr>
+                )}
+            </tbody>
+        </table>
+        <form onSubmit={handleCreateSplit} id="createSplit"></form>
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Ratio</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="date" name="date" form="createSplit" /></td>
+                    <td><input type="number" name="ratio" form="createSplit" /></td>
+                    <td><button className="create" form="createSplit" ></button></td>
+                </tr>
+
+                {investment.splits.map(split =>
+                    <tr key={split.id}>
+                        <td>{`${split.date.getDate()} / ${split.date.getMonth()} / ${split.date.getFullYear() % 100}`}</td>
+                        <td>1:{split.ratio}</td>
+                        <td><button className="delete" onClick={() => handleDeleteSplit(split.id)}></button></td>
                     </tr>
                 )}
             </tbody>

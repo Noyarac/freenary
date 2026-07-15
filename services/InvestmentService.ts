@@ -7,6 +7,8 @@ import { InvestmentSubTypeName } from "@/types/InvestmentSubType"
 import Scpi from "@/entities/Scpi"
 import Stock from "@/entities/Stock"
 import Livret from "@/entities/Livret"
+import Split from "@/entities/Split"
+import SplitDTO from "@/types/SplitDTO"
 
 export default {
     repository: await getRepository(Investment),
@@ -39,7 +41,8 @@ export default {
                 latentCapitalGain,
                 performance,
                 expectedPerformance,
-                movements: investment.movements.map(entity => ({...entity, investmentId: entity.investment?.id, investment: undefined}))
+                movements: investment.movements.map(entity => ({...entity, investmentId: entity.investment?.id, investment: undefined})),
+                splits: investment.splits.map(entity => ({...entity, investmentId: entity.investment?.id, investment: undefined}))
             } as InvestmentDTO
         }))
     },
