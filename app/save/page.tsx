@@ -82,7 +82,7 @@ function SaveContent() {
             </select>
             <label htmlFor="id">Id</label>
             {["Scpi", "Stock"].includes(selectedOption) && <> {investment !== undefined && <input type="hidden" name="id" value={investment.id} />} <input type="text" name="id" value={investment?.id} required={investment === undefined} disabled={investment !== undefined} /></> }
-            { selectedOption === "Scpi" && <p>Use the id from <code>www.scpi-lab.com</code>. For example, for <code>https://www.scpi-lab.com/scpi/scpi-pierval-sante-93/</code> or <code>https://www.scpi-lab.com/scpi.php?vue=&produit_id=93</code>, use <code>93</code>.</p> }
+            { selectedOption === "Scpi" && <p>Use the id from <code>https://www.primaliance.com</code>. For example, for <code>https://www.primaliance.com/scpi-de-rendement/313-scpi-epargne-pierre-europe</code>, use <code>313</code>.</p> }
             { selectedOption === "Stock" && <p>Use the id from <code>finance.yahoo.com</code>. For example, for <code>https://fr.finance.yahoo.com/quote/AI.PA/</code>, use <code>AI.PA</code>.</p> }
             { selectedOption === "Scpi" && <>
             <label htmlFor="enableDividend">Enable dividend</label>

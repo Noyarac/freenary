@@ -1,7 +1,7 @@
 import { ChildEntity, Column } from "typeorm"
 import Investment from "@/entities/Investment"
 import InvestmentInterface from "@/types/Investment"
-import ScpiProviderWrapper from "@/prodivers/ScpiProvider"
+import ScpiProviderWrapper from "@/prodivers/ScpiProvider-primaliance"
 import InvestmentProvider from "@/types/InvestmentProvider"
 
 @ChildEntity("Scpi")
