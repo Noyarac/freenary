@@ -158,7 +158,7 @@ function DetailsContent() {
 
                 {investment.movements.map(movement =>
                     <tr key={movement.id}>
-                        <td>{`${movement.date.getDate()} / ${movement.date.getMonth()} / ${movement.date.getFullYear() % 100}`}</td>
+                        <td>{`${movement.date.getDate()} / ${movement.date.getMonth() + 1} / ${movement.date.getFullYear() % 100}`}</td>
                         <td>{movement.quantity}</td>
                         <td>{formatNumber(movement.price) + " €"}</td>
                         <td><button className="delete" onClick={() => handleDelete(movement.id)}></button></td>
@@ -184,7 +184,7 @@ function DetailsContent() {
 
                 {investment.splits.map(split =>
                     <tr key={split.id}>
-                        <td>{`${split.date.getDate()} / ${split.date.getMonth()} / ${split.date.getFullYear() % 100}`}</td>
+                        <td>{`${split.date.getDate()} / ${split.date.getMonth() + 1 } / ${split.date.getFullYear() % 100}`}</td>
                         <td>1:{split.ratio}</td>
                         <td><button className="delete" onClick={() => handleDeleteSplit(split.id)}></button></td>
                     </tr>
