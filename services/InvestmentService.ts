@@ -7,6 +7,7 @@ import { InvestmentSubTypeName } from "@/types/InvestmentSubType"
 import Scpi from "@/entities/Scpi"
 import Stock from "@/entities/Stock"
 import Livret from "@/entities/Livret"
+import constants from "@/configurations/constants"
 
 export default {
     repository: await getRepository(Investment),
@@ -24,8 +25,11 @@ export default {
                 name = details.name
                 value = details.unitValue * quantity
                 dividendsPerMonth = details.unitYearlyDividends * quantity / 12
-                latentCapitalGain = details.unitLatentCapitalGain * quantity / 12
-                performance = (details.unitYearlyDividends + details.unitLatentCapitalGain) * quantity / invested
+                const years = (new Date().valueOf() - new Date(constants.START_DATE).valueOf()) / constants.MILLISECONDS_IN_YEAR
+                latentCapitalGain = details.unitLatentCapitalGain * quantity / 12 / (investment.constructor.name === "Stock" ? years : 1)
+                performance = investment.constructor.name === "Stock" ?
+                    (details.unitValue / (details.unitValue - details.unitLatentCapitalGain)) ** (1 / years) - 1
+                    : (details.unitYearlyDividends + details.unitLatentCapitalGain) * quantity / invested
                 expectedPerformance = details.expectedPerformance
             }
             return {
